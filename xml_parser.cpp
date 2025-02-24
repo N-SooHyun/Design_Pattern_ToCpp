@@ -80,11 +80,12 @@ namespace file {
 				c = fgetc(pFile);
 				if (c == EOF) break;
 				else if (current_size == capacity - 1) {
-					xml_content[current_size] = '\0';
 					capacity *= 2;
 					temp = xml_content;
 					xml_content = new char[capacity];
-					strcpy_s(xml_content, sizeof(*xml_content), temp);
+					for (int i = 0; i < current_size; i++) {
+						xml_content[i] = temp[i];
+					}
 					delete temp;
 				}
 				xml_content[current_size] = c;
@@ -95,24 +96,25 @@ namespace file {
 				temp[i] = xml_content[i];
 			}
 			temp[current_size] = '\0';
+			capacity = current_size;
 			delete xml_content;
 			xml_content = temp;
 			fclose(pFile);
 		}
 	};
-
 }
 
 namespace xml_parser {
-	void open_xml_file() {
-
+	void open_xml_file(file::read_file* file) {
+		printf("%s\n", file->xml_content);
+		printf("%d\n", file->current_size);
 	}
 
 	void xml_parser_main() {
-		char path[] = "directory\\test.txt";
+		char path[] = "directory\\test.xml";
 		file::read_file test(path);
 		printf("%s\n", test.xml_content);
-		printf("메인 함수\n");
+		//open_xml_file(&test);
 	}
 }
 
