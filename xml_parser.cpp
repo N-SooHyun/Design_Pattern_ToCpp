@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string>
 
 //XML은 <>형태로 싸여진 계층형 데이터 구조 문서이다.
 /*
@@ -56,16 +60,13 @@ SAX는 필요한 데이터만 뽑아 쓰는 느낌으로 진행하여
 */
 
 namespace nDynamic {
-	class DynamicStr {
+	class DynamicStr {		//문자열들 동적으로 넣어주는 클래스 대입연산자도 있음
 	public:
 		char* p_d_str;
 		int current_size_str;
 		int capacity_str;
 
-		char* p_d_data;		//속성일때는 데이터
-		int current_size_data;
-		int capacity_data;
-		DynamicStr(int size) : capacity_str(size), current_size_str(0), p_d_data(nullptr){
+		DynamicStr(int size) : capacity_str(size), current_size_str(0){
 			p_d_str = new char[capacity_str];
 		}
 		~DynamicStr() { 
@@ -73,23 +74,15 @@ namespace nDynamic {
 				delete p_d_str; 
 		}
 
-		void OperStr(int pos, char c) {
-			if (pos >= capacity_str) {
+		void AsgOperStr(int pos, char c) {			//문자 대입연산
+			if (pos-1 >= capacity_str) {
 				SizeUpStr();
 			}
 			p_d_str[pos] = c;
+			p_d_str[pos + 1] = '\0';
 			current_size_str++;
-		}
-		void OperData(int pos, char c) {
-			if (pos >= capacity_str) {
-				SizeUpStr();
-			}
-			p_d_data[pos] = c;
-			current_size_data++;
-		}
-
-		
-		void SizeUpStr() {
+		}		
+		void SizeUpStr() {							//문자 개수 부족할때 동적으로 늘려줌
 			int old_capacity = capacity_str;
 			capacity_str *= 2;
 			char* temp = new char[capacity_str];
@@ -100,14 +93,14 @@ namespace nDynamic {
 			p_d_str = temp;
 		}
 
-		void EmptyStr(int init_capacity_size) {
+		void EmptyStr(int init_capacity_size) {		//동적 문자열 해제해줌
 			delete p_d_str;
 			p_d_str = new char[init_capacity_size];
 			current_size_str = 0;
 			capacity_str = init_capacity_size;
 		}
 
-		void FitSizeStr() {
+		void FitSizeStr() {							//불필요한 동적 영역 없애줌
 			char* temp = new char[current_size_str+1];
 			for (int i = 0; i < current_size_str; i++) {
 				temp[i] = p_d_str[i];
@@ -115,19 +108,7 @@ namespace nDynamic {
 			temp[current_size_str] = '\0';
 			delete p_d_str;
 			p_d_str = temp;
-		}
-
-		void FitSizeData() {
-			char* temp = new char[current_size_data + 1];
-			for (int i = 0; i < current_size_str; i++) {
-				temp[i] = p_d_data[i];
-			}
-			temp[current_size_str] = '\0';
-			delete p_d_data;
-			p_d_data = temp;
-		}
-
-		
+		}		
 	};
 }
 
@@ -183,23 +164,39 @@ namespace nFile {
 }
 
 namespace nXml_Parser {
+	using namespace std;
+	using namespace nDynamic;
 	class XmlObj {
 	public:
-		char *obj_tag_name;		//동적 배열 이름
-		//추후 속성 멤버 리소스 필요
-		XmlObj* child_obj;		//동적 배열 자식 태그들
-		int child_obj_size;		//동적 배열 자식 태그들의 개수
-		void* data;				//혹은 태그가 없고 데이터만 있는 경우
+		DynamicStr* obj_name;						//오브젝트의 이름(태그명)
+		//map<string, vector<XmlObj*>> children;		//자식 태그들
+		XmlObj* children;							//자식 태그들
+		void* data;									//데이터
 
-		XmlObj(char *_obj_tag_name, int name_size) : obj_tag_name(new char[name_size+1]) {
-			for (int i = 0; i < name_size; i++) {
-				obj_tag_name[i] = _obj_tag_name[i];		//이름 복사
+		XmlObj(char* _obj_name){
+			int init_size = 1024;
+			obj_name = new DynamicStr(init_size);
+			for (int i = 0; ; i++) {
+				if (_obj_name[i] == '\0') {
+					obj_name->AsgOperStr(i, '\0');
+					obj_name->FitSizeStr();
+					break;
+				}
+				obj_name->AsgOperStr(i, _obj_name[i]);
 			}
-			obj_tag_name[name_size] = '\0';
 		}
-		XmlObj() {}
+
+		~XmlObj() {
+			delete obj_name;
+			delete children;
+		}
 
 		
+	};
+	class XmlAttr {
+	public:
+		DynamicStr* attr_name;
+		DynamicStr* attr_data;
 	};
 
 	using namespace nDynamic;
@@ -225,81 +222,123 @@ namespace nXml_Parser {
 		//계층형 구조로써 동작한는 프로그램
 		char c; 
 		int data_cnt = 0;
-		int data_size = 1024;
-		int tag_size = 1024;
-		int attr_cnt = 1024;				//속성개수
+		int data_size = 1024;				//데이터문자 개수
+		int tag_size = 1024;				//태그문자 개수
+		int attr_size = 1024;				//속성문자 개수
 		DynamicStr data(data_size);			//데이터
 		DynamicStr tag_name(tag_size);		//태그이름
+		DynamicStr attr_name(attr_size);	//속성명
+		DynamicStr attr_data(attr_size);	//속성데이터
 		
-		XmlObj* tag_root = new XmlObj();
+		XmlObj* tag_root;
 		XmlObj* tag;
 
-		bool tr_end_tag = false;
-		bool tr_attr_input = false;
+		bool tr_end_tag = false;		//태그 생성인지 /인지 체크해주는 트리거
+		bool tr_attr = false;
+		bool tr_tag_root = false;
+		bool tr_attrs = false;
 
-		for (int i = 0; (i < xml_file->current_size_str); i++) {
+		int i = -1;
+		do {
+			i++;
 			c = xml_file->pXml_Content[i];
-			for (;; i++) {
-				c = xml_file->pXml_Content[i];
-				if (c == '\n' || c == ' ') {
-					continue;
-				}
-				else {
-					break;
-				}
+			
+			if (c == '\n' || c == ' ') {	//공백 제거
+				continue;
 			}
-			if (c == '<') {		//태그일때
+			else if (c == '<') {	//태그 생성(속성도 추가)
 				tr_end_tag = false;
-				c = xml_file->pXml_Content[++i];
-				for (int j = 0; ; i++, j++) {
+				int j = -1;
+				do {
+					i++, j++;
 					c = xml_file->pXml_Content[i];
-					if (c == '>') break;
-					if ((c == '/') && (xml_file->pXml_Content[i-1] == '<')) tr_end_tag = true;
-					else if (c == ' ') {}//attr_input = true;	//속성입력
-					if (tr_end_tag != true) {		//태그 이름 넣어주기
-						tag_name.OperStr(j, c);
-					}
-				}
-				if (tr_end_tag != true) {			//태그 종료 아닐때 태그 생성
-					if (tr_attr_input == true) {	//속성값 있다면
 
+					if (c == '>') break;
+					else if ((c == '/') && (xml_file->pXml_Content[i - 1] == '<')) tr_end_tag = true;
+					else if (tr_end_tag != true) {
+						tag_name.AsgOperStr(j, c);
 					}
-					tag_name.FitSizeStr();
-					tag = new XmlObj(tag_name.p_d_str, tag_name.current_size_str);
-					printf("Tag : %s\n", tag_name.p_d_str);
-					tag_name.EmptyStr(tag_size);
+					else if (c == ' ') {	//속성 생성(속성명, 데이터 1쌍으로 이루어짐 ex:attr="data")
+						int k = -1;
+						tr_attr = true;
+						do {				//속성명
+							i++, k++;
+							c = xml_file->pXml_Content[i];
+							if (c == ' ') {			//다중속성인경우
+								tr_attrs = true;
+								attr_data.EmptyStr(1024);
+								attr_name.EmptyStr(1024);
+								continue;
+							}
+							else if (c == '\"') {	//속성데이터
+								int l = -1;
+								do {
+									i++, l++;
+									c = xml_file->pXml_Content[i];
+									if (c == '\"') {	//속성데이터 끝임을 암시
+										break;
+									}
+									else
+										attr_data.AsgOperStr(l, c);
+								} while (1);
+							}
+							else if (c == '>') {
+								i--;
+								break;
+							}
+							else {					//속성명
+								attr_name.AsgOperStr(k, c);
+							}
+						} while (1);
+						if (tr_attrs) {//속성이 여러개
+
+						}
+						else {//속성이 1개
+
+						}
+					}
+				} while (1);
+				if (tr_end_tag != true) {		//태그가 </> 이게 아닐때만 만들어주기
+					tag = new XmlObj(tag_name.p_d_str);
+					if (tr_tag_root == false) {
+						tr_tag_root = true;
+						tag_root = tag; 
+					}
+					//printf("tag : %s\n", tag->obj_name->p_d_str);
 				}
 			}
-			//데이터일때
-			if (c != '>' && tr_end_tag == false) {
+			else if (c != '>' && tr_end_tag == false) {		//데이터일때
 				char ck;
-				for (int j = 0; ; i++,j++) {
+				int j = 0;
+				do {
+					data.AsgOperStr(j, c);
+					i++, j++;
 					c = xml_file->pXml_Content[i];
-					data.OperStr(j, c);
-					if (((ck = xml_file->pXml_Content[i + 1]) == '<') && ((ck = xml_file->pXml_Content[i + 2]) == '/')) {
-						i += 2;
-						tr_end_tag = true;
+					if (c == '<') {
+						c = xml_file->pXml_Content[--i];
 						break;
 					}
-				}
-				data.FitSizeStr();
-				//printf("data : %s\n", data.p_d_str);
+				} while (1);
+				//데이터를 넣어주면 된다 태그에
+				//tag->data = data.p_d_str;
+				printf("data : %s\n", data.p_d_str);
 				data.EmptyStr(data_size);
 			}
-		}
-		printf("데이터 개수 : %d\n", data_cnt);
+
+		} while (i<xml_file->current_size_str);
+
+		
 	}
 
 	void XmlParseMain() {
 		using namespace nDynamic;
+
 		char path[] = "directory\\test.xml";
 		nFile::ReadFile test(path);
 		printf("%s\n", test.pXml_Content);
 		XmlFileResCk(&test);
 		XmlWordCkToObj(&test);
 		XmlObjParserTree(&test);
-
-		
 
 	}
 }
