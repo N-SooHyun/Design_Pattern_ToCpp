@@ -168,38 +168,192 @@ namespace nXml_Parser {
 	using namespace nDynamic;
 	class XmlObj {
 	public:
-		DynamicStr* obj_name;						//오브젝트의 이름(태그명)
-		//map<string, vector<XmlObj*>> children;		//자식 태그들
-		XmlObj* children;							//자식 태그들
-		void* data;									//데이터
+		XmlObj(){
+			obj_current_size = 0;
+			child_current_size = 0;
+			obj_attr_current_size = 0;
+			obj_data_current_size = 0;
 
-		XmlObj(char* _obj_name){
-			int init_size = 1024;
-			obj_name = new DynamicStr(init_size);
-			for (int i = 0; ; i++) {
-				if (_obj_name[i] == '\0') {
-					obj_name->AsgOperStr(i, '\0');
-					obj_name->FitSizeStr();
-					break;
-				}
-				obj_name->AsgOperStr(i, _obj_name[i]);
-			}
+			obj_capacity = 100;
+			child_capacity = 10;
+			obj_attr_capacity = 10;
+			obj_data_capacity = 100;
+
+			obj_name = new DynamicStr(obj_capacity);
+			child_obj = new XmlObj[child_capacity];
+			attr_obj = new XmlAttr[obj_attr_capacity];
+			obj_data = new DynamicStr(obj_data_capacity);
 		}
 
 		~XmlObj() {
+			delete child_obj;
+			delete attr_obj;
+			delete obj_data;
 			delete obj_name;
-			delete children;
 		}
 
+		//깊은 복사 생성자
+		XmlObj(const XmlObj& other) {
+			child_obj = new XmlObj(*other.child_obj);
+		}
+
+		//깊은 복사 대입 연산자
+		XmlObj& operator=(const XmlObj& other) {
+			if (this != &other) {	//자기자신체크
+				delete child_obj;
+				child_obj = new XmlObj(*other.child_obj);
+			}
+			return *this;
+		}
+
+		void Insert_Child() {
+			child_current_size++;
+			if (child_current_size > child_capacity) {	//동적배열 크기 늘려줘야함
+				child_capacity *= 2;
+				DeepCopy(1);
+			}
+		}
+
+		void DeepCopy(int type) {
+			switch (type) {
+				case 1://자식배열 늘릴때
+					XmlObj* new_child_obj = new XmlObj[child_capacity];
+					for (int i = 0; i < child_current_size-1; i++) {
+						new_child_obj[i] = child_obj[i];
+					}
+					break;
+				case 2:
+					break;
+				default:
+					break;
+			}
+		}
+
+		//동적배열 불필요한부분 감소 시켜주는애
+
+		//동적배열 해제해주는 애
+
+		//동적배열 대입으로 문자 삽입해주는애
 		
-	};
-	class XmlAttr {
-	public:
-		DynamicStr* attr_name;
-		DynamicStr* attr_data;
+
+	private:
+		DynamicStr* obj_name;			//객체 이름
+		int obj_capacity;				//객체이름의 용량
+		int obj_current_size;			//현재 크기
+
+		XmlObj* child_obj;				//동적배열 자식 객체
+		int child_capacity;			//자식객체의 용량
+		int child_current_size;		//자식객체의 현재 크기
+		
+		XmlAttr* attr_obj;			//동적배열 속성 객체
+		int obj_attr_capacity;			//속성객체의 용량
+		int obj_attr_current_size;		//속성객체의 현재 크기
+
+		DynamicStr* obj_data;			//데이터
+		int obj_data_capacity;			//데이터 용량
+		int obj_data_current_size;		//데이터 현재크기 
 	};
 
-	using namespace nDynamic;
+
+
+	class XmlAttr {
+	public:
+
+	private:
+		char* attr_name;			//속성 이름
+		int attr_capacity;			//속성 용량
+		int attr_current_size;		//속성 현재 크기
+		
+		char* attr_data;					//속성 데이터
+		int attr_data_capacity;			//데이터 용량
+		int attr_data_current_size;		//데이터 현재 크기
+
+	}; 
+
+	class XmlParse {
+	private:
+		char current_word;
+		int init_size;
+		DynamicStr* tag_name = nullptr;
+
+		XmlObj* Root_Obj = nullptr;
+		XmlObj* Parent_Obj = nullptr;		//위치 조절해주는 객체들임
+		XmlObj* Child_Obj = nullptr;		//위치 조절해주는 객체들임
+		XmlObj* tag_obj = nullptr;
+		XmlAttr* attr_obj = nullptr;
+
+		//상태에 대한 부분을 체크해주는 bool 변수들
+		bool tr_end_tag;		//태그가 종료되었는지 확인하는 변수
+
+		int current_word_pos;
+	public:
+		XmlParse() : Root_Obj(nullptr), tag_obj(nullptr), attr_obj(nullptr), Parent_Obj(nullptr), Child_Obj(nullptr){
+			current_word_pos = -1;
+			init_size = 1024;
+			tag_name = new DynamicStr(init_size);
+		}
+
+		void Obj_Process(int i, char c, nFile::ReadFile* xml_file) {		//객체 처리에 대한 부분
+			//c == '<'
+			if (Root_Obj == nullptr) {
+				Root_Obj = new XmlObj();
+				Parent_Obj = Root_Obj;
+			}
+			else {
+				tag_obj = new XmlObj();
+				Child_Obj = tag_obj;
+				//부모에게 삽입해줄 수 있겠지?
+			}
+
+			tr_end_tag = false;
+			int j = -1;
+			do {
+				i++, j++;
+				c = xml_file->pXml_Content[i];
+
+				if (c == '>') break;
+				else if ((c == '/') && (xml_file->pXml_Content[i - 1] == '<')) tr_end_tag = true;
+				else if (tr_end_tag != true) tag_name->AsgOperStr(j, c);
+				else if (c == ' ') {	//속성 진행
+					Attr_Process(i, c, xml_file);
+				}
+			} while (1);
+			//객체 정리해주기
+			
+		}
+
+		void Attr_Process(int i, char c, nFile::ReadFile* xml_file) {		//속성 처리에 대한 부분
+			//c == ' '
+			int j = -1;
+
+
+		}
+
+		void Data_Process() {		//데이터 처리에 대한 부분
+
+		}
+
+		void XmlObjParserNewVersion(nFile::ReadFile* xml_file) {
+			//계층형 구조의 XML 파싱 구조	
+			//3단계로 나뉘어짐 Obj, Attr, Data
+			int& i = current_word_pos;
+			char& c = current_word;
+			do {
+				i++;
+				c = xml_file->pXml_Content[i];
+				if (c == '\n' || c == ' ') continue;		//공백 제거
+
+				else if (c == '<') {		//태그 생성
+					Obj_Process(i, c, xml_file);
+				}
+
+
+			} while (i < xml_file->current_size_str);
+
+		}
+	};
+
+	
 	void XmlFileResCk(nFile::ReadFile* xml_file) {
 		printf("file에 대한 리소스\n");
 		printf("받아온 xml의 용량(capacity) : %d\n", xml_file->capacity);
@@ -222,6 +376,7 @@ namespace nXml_Parser {
 		//계층형 구조로써 동작한는 프로그램
 		char c; 
 		int data_cnt = 0;
+		int obj_cnt = 0;
 		int data_size = 1024;				//데이터문자 개수
 		int tag_size = 1024;				//태그문자 개수
 		int attr_size = 1024;				//속성문자 개수
@@ -230,8 +385,8 @@ namespace nXml_Parser {
 		DynamicStr attr_name(attr_size);	//속성명
 		DynamicStr attr_data(attr_size);	//속성데이터
 		
-		XmlObj* tag_root;
-		XmlObj* tag;
+		XmlObj* Root = nullptr;
+		XmlObj* tag = nullptr;
 
 		bool tr_end_tag = false;		//태그 생성인지 /인지 체크해주는 트리거
 		bool tr_attr = false;
@@ -247,6 +402,10 @@ namespace nXml_Parser {
 				continue;
 			}
 			else if (c == '<') {	//태그 생성(속성도 추가)
+
+				if (Root == nullptr) Root = new XmlObj();		//루트 없을때는 루트에 만들기
+				else tag = new XmlObj();
+
 				tr_end_tag = false;
 				int j = -1;
 				do {
@@ -299,12 +458,13 @@ namespace nXml_Parser {
 					}
 				} while (1);
 				if (tr_end_tag != true) {		//태그가 </> 이게 아닐때만 만들어주기
-					tag = new XmlObj(tag_name.p_d_str);
+					
+					/*tag = new XmlObj(tag_name.p_d_str);
 					if (tr_tag_root == false) {
 						tr_tag_root = true;
 						tag_root = tag; 
 					}
-					//printf("tag : %s\n", tag->obj_name->p_d_str);
+					printf("%d. tag : %s\n", ++obj_cnt,tag->obj_name->p_d_str);*/
 				}
 			}
 			else if (c != '>' && tr_end_tag == false) {		//데이터일때
@@ -321,7 +481,7 @@ namespace nXml_Parser {
 				} while (1);
 				//데이터를 넣어주면 된다 태그에
 				//tag->data = data.p_d_str;
-				printf("data : %s\n", data.p_d_str);
+				//printf("%d. data : %s\n",++data_cnt, data.p_d_str);
 				data.EmptyStr(data_size);
 			}
 
