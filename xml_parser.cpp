@@ -185,6 +185,7 @@ namespace nXml_Parser {
 			obj_data = new DynamicStr(obj_data_capacity);
 		}
 
+
 		~XmlObj() {
 			delete child_obj;
 			delete attr_obj;
