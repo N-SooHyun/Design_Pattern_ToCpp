@@ -109,6 +109,7 @@ namespace nDynamic {
 			delete p_d_str;
 			p_d_str = temp;
 		}		
+
 	};
 }
 
