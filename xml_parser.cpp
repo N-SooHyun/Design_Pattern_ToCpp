@@ -90,6 +90,7 @@ namespace nDynamic {
 				temp[i] = p_d_str[i];
 			}
 			delete p_d_str;
+
 			p_d_str = temp;
 		}
 
