@@ -188,6 +188,7 @@ namespace nXml_Parser {
 		}
 
 
+
 		~XmlObj() {
 			delete child_obj;
 			delete attr_obj;
