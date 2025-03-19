@@ -137,13 +137,46 @@ namespace nDynamic {
 			printf("DynamicArr 복사생성자\n");
 		}
 
-		void Init_Attr_Arr() {
+		//동적 배열 초기화
+		void Init_Arr() {
 			if (obj_arr != nullptr) {
 				delete[] obj_arr;
 			}
 			capacity = 4;				//초기 속성값은 4정도?
 			obj_arr = new T[capacity];
 			currentPos = 0;
+		}
+
+		//동적 배열 추가
+		void Add_Arr() {
+			int old_capacity = capacity;
+			capacity = static_cast<int>(capacity*1.5);
+
+			T* new_obj_arr = new T[capacity];
+
+			for (int i = 0; i < old_capacity; i++) {	//shallow copy
+				new_obj_arr[i] = obj_arr[i];
+			}
+			delete[] obj_arr;
+			obj_arr = new_obj_arr;
+		}
+
+		void Ck_Arr() {
+			if (currentPos >= capacity) {
+				Add_Arr();
+				return;
+			}
+			else if(obj_arr == nullptr) {
+				Init_Arr();
+				return;
+			}
+			return;
+		}
+
+		//동적 배열 삽입(data를 넣어야함)
+		void operator<<(T& insert_data) {
+			Ck_Arr();
+			obj_arr[currentPos++] = insert_data;
 		}
 	
 

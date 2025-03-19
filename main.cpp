@@ -2,12 +2,92 @@
 
 #include "xml_parser.h"
 
+class dummy {
+public:
+	dummy(char* name, char* data) {
+		this->name = name;
+		this->data = data;
+	}
+	dummy() {}
+	~dummy() {}
+
+	char* name;
+	char* data;
+};
+
+template <typename T>
+class test {
+public:
+	test() {
+		currentPos = 0;
+		capacity = 3;
+		obj_arr = new T[capacity];
+	}
+	~test() {
+		delete[] obj_arr;
+	}
+
+	void Add_Arr() {
+		int old_capacity = capacity;
+		capacity += 3;
+
+		T* new_obj_arr = new T[capacity];
+
+		for (int i = 0; i < old_capacity; i++) {
+			new_obj_arr[i] = obj_arr[i];
+		}
+		delete[] obj_arr;
+		obj_arr = new_obj_arr;
+	}
+
+	void ck() {
+		if (currentPos >= capacity) {
+			Add_Arr();
+			return;
+		}
+		return;
+	}
+
+	void operator<<(T& insert_data) {
+		ck();
+		obj_arr[currentPos++] = insert_data;
+	}
+
+	int currentPos;
+	int capacity;
+	T* obj_arr;
+};
+
 int main() {
 	//객체지향에 대한 깊은 이해를 위해서
 	//계층구조에 대한 특화 프로그램인 XML,DOM
 	//디자인 패턴에 대해서 간략하게 배워보는 시간 가져보기
 
-	nXml_Parser::XmlParseMain();
+	//nXml_Parser::XmlParseMain();
+	char name[] = { 'a','d','c','\0'};
+	char data[] = { 'z','x','c','\0' };
+
+	printf("%s, %s\n", name, data);
+
+	dummy d_data(name, data);
+	dummy d_data1(name, data);
+	dummy d_data2(name, data);
+	dummy d_data3(name, data);
+	dummy d_data4(name, data);
+	dummy d_data5(name, data);
+
+
+	test<dummy> t;
+	t << d_data;
+	t << d_data1;
+	t << d_data2;
+	t << d_data3;
+	t << d_data4;
+	t << d_data5;
+
+
+	
+
 
 	return 0;
 }
