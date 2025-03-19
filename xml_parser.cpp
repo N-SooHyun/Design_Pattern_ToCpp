@@ -125,7 +125,7 @@ namespace nDynamic {
 		}
 	};
 
-	//속성용 배열
+	//템플릿 동적 배열
 	template <typename T>
 	class DynamicArr {
 	public:
@@ -145,42 +145,7 @@ namespace nDynamic {
 			obj_arr = new T[capacity];
 			currentPos = 0;
 		}
-
-		//배열크기 증가
-		void Add_Attr_Capacity() {
-			int old_capacity = capacity;
-			capacity = static_cast<int>(capacity*1.5);
-			T* new_attr_arr = new T[capacity];
-			
-			for (int i = 0; i < old_capacity; i++) {
-				new_attr_arr[i] = obj_arr[i];
-			}
-			delete[] obj_arr;
-			obj_arr = new_attr_arr;
-		}
-		
-		//배열에 대입
-		void operator<<(T& add_arr_node) {
-			if (currentPos >= capacity) {
-				Add_Attr_Capacity();
-			}
-			obj_arr[currentPos++] = add_arr_node;
-		}
-
-		//모든 속성 배열에 있는 값 출력
-		void All_Attr_Print() {
-			for (int i = 0; i < currentPos; i++) {
-				printf("%s \n", obj_arr[i].GetName());
-			}
-		}
-
-		T* Pocusing_Get_Attr(int pos) {
-			if (pos >= currentPos) {
-				printf("배열 크기에 맞는 위치의 값을 입력해주세요(현재 배열크기 : %d\n", currentPos);
-				return NULL;
-			}
-			obj_arr+pos;
-		}
+	
 
 	public:
 		int currentPos;
@@ -268,7 +233,7 @@ namespace nXml_Parser {
 		}
 
 		char* GetData() {
-			return AttrData->p_d_str; 
+			return AttrData->p_d_str;
 		}
 
 	private:
@@ -298,29 +263,6 @@ namespace nXml_Parser {
 		}
 
 
-
-		//속성 초기화
-		void Init_Attr() {
-			if (AttrArr == nullptr) {
-				AttrArr = new DynamicArr<AttrObj>();
-				AttrArr->Init_Attr_Arr();
-			}
-		}
-		//속성에 값 추가
-		void Add_Attr(AttrObj* attr_node) {
-			Init_Attr();
-			*AttrArr << *attr_node;
-		}
-
-		void operator<<(AttrObj& add_attr) {
-			Init_Attr();
-			*AttrArr << add_attr;
-		}
-
-		AttrObj* operator[](int pos) const {
-			return AttrArr->Pocusing_Get_Attr(pos);
-		}
-
 	public:
 		DynamicStr* TagName;		//객체인 자신의 이름
 		DynamicArr<AttrObj>* AttrArr;		//나만의 속성'들'
@@ -349,6 +291,7 @@ namespace nXml_Parser {
 
 		printf("\n 속성 추가 2개\n");
 
+		//속성이름 2개 생성
 		DynamicStr* AttrName1 = new DynamicStr(11); 
 		DynamicStr* AttrName2 = new DynamicStr(11);
 
@@ -358,7 +301,10 @@ namespace nXml_Parser {
 		}
 		AttrName1->FitSizeStr();
 		AttrName2->FitSizeStr();
+		
 
+		
+		
 		
 
 		//printf("%s\n", testTag.AttrArr->obj_arr[1].Getname());
