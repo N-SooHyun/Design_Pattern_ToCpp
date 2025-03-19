@@ -147,7 +147,6 @@ namespace nDynamic {
 		}
 
 		//배열크기 증가
-
 		void Add_Attr_Capacity() {
 			int old_capacity = capacity;
 			capacity = static_cast<int>(capacity*1.5);
