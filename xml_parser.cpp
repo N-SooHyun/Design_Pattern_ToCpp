@@ -65,14 +65,19 @@ namespace nDynamic {
 		char* p_d_str;
 		int current_size_str;
 		int capacity_str;
+		bool just_shallow_copy;
 
 		DynamicStr() {}
 
-		DynamicStr(int size) : capacity_str(size), current_size_str(0){
+		DynamicStr(int size) : capacity_str(size), current_size_str(0), just_shallow_copy(false){
 			p_d_str = new char[capacity_str];
 		}
 		~DynamicStr() {
 			printf("Str 소멸자\n");
+			if (just_shallow_copy) {
+				just_shallow_copy = false;
+				return;
+			}
 			delete[] p_d_str;
 		}
 
@@ -156,8 +161,9 @@ namespace nDynamic {
 
 			for (int i = 0; i < old_capacity; i++) {	//shallow copy
 				new_obj_arr[i] = obj_arr[i];
+				//obj_arr[i] = 0;
 			}
-			delete[] obj_arr;
+			delete[] obj_arr;			//이게 호출되면 DynamicStr의 소멸자가 호출되어서 조절을 잘해줘야 할듯
 			obj_arr = new_obj_arr;
 		}
 

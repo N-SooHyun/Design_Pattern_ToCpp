@@ -9,7 +9,9 @@ public:
 		this->data = data;
 	}
 	dummy() {}
-	~dummy() {}
+	~dummy() {
+		
+	}
 
 	char* name;
 	char* data;
