@@ -23,7 +23,10 @@ public:
 	test() {
 		currentPos = 0;
 		capacity = 3;
-		obj_arr = new T[capacity];
+		obj_arr = new T * [capacity];
+		for (int i = 0; i < capacity; i++) {
+			obj_arr[i] = nullptr;
+		}
 	}
 	~test() {
 		delete[] obj_arr;
@@ -33,7 +36,7 @@ public:
 		int old_capacity = capacity;
 		capacity += 3;
 
-		T* new_obj_arr = new T[capacity];
+		T** new_obj_arr = new T*[capacity];
 
 		for (int i = 0; i < old_capacity; i++) {
 			new_obj_arr[i] = obj_arr[i];
@@ -50,14 +53,18 @@ public:
 		return;
 	}
 
+	void Delete_Arr_Data() {
+		
+	}
+
 	void operator<<(T& insert_data) {
 		ck();
-		obj_arr[currentPos++] = insert_data;
+		obj_arr[currentPos++] = &insert_data;
 	}
 
 	int currentPos;
 	int capacity;
-	T* obj_arr;
+	T** obj_arr;		//포인터배열을 만들어야 할듯
 };
 
 int main() {
