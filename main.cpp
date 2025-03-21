@@ -72,8 +72,10 @@ int main() {
 	//계층구조에 대한 특화 프로그램인 XML,DOM
 	//디자인 패턴에 대해서 간략하게 배워보는 시간 가져보기
 
-	//nXml_Parser::XmlParseMain();
-	char name[] = { 'a','d','c','\0'};
+	nXml_Parser::XmlParseMain();
+
+
+	/*char name[] = { 'a','d','c','\0'};
 	char data[] = { 'z','x','c','\0' };
 
 	printf("%s, %s\n", name, data);
@@ -95,12 +97,11 @@ int main() {
 	t << d_data5;
 
 
-	
+	*/
 
 
 	return 0;
 }
-
 
 
 
