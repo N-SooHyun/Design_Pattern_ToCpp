@@ -134,48 +134,51 @@ namespace nDynamic {
 	public:
 		DynamicArr() :current_pos(0), capacity(0), obj_arr(nullptr) {};
 		~DynamicArr() {
+			for (int i = 0; i < current_pos; i++) {
+				delete obj_arr[i];
+			}
 			delete[] obj_arr;
 		};
 		DynamicArr(const DynamicArr& other) {
 			printf("DynamicArr 복사생성자\n");
 		}
 
-		//동적배열 초기화
-		void Init_Arr() {
-			if (obj_arr != nullptr) {
-				//예외처리
-			}
-			capacity = 4;
-			obj_arr = new T * [capacity];		//포인터를 참조하는 배열
-			current_pos = 0;
+		//해제
+		void DeleteFunc() {
+			
 		}
 
-		//동적 배열의 크기 증가(Add)
-		void Add_Arr() {
-			int old_capacity = capacity;
-			capacity = static_cast<int>(capacity * 1.5);
-
-			T** new_obj_arr = new T * [capacity];
-
-			for (int i = 0; i < old_capacity; i++) {
-				obj_arr[i] = new_obj_arr[i];				//Shallow Copy 참조값만 복사해줌
-			}
-			delete[] obj_arr;
-			obj_arr = new_obj_arr;
-		}
-		
-		//User API Code
-		//배열에 삽입 (포인터 배열에 삽입이라 주소값을 매개변수로 받아야함)
-		void Insert_Arr(T* insert_data) {
+		//속성 배열 초기화
+		void InitAttrArr() {
 			if (obj_arr == nullptr) {
-				Init_Arr();
+				capacity = 4;
+				obj_arr = new T*[capacity];
 			}
-			else if (current_pos >= capacity) {
-				Add_Arr();
+		}
+
+		//속성 배열 크기 증가(예외 검사용)
+		void AddAttrArr() {
+			if (current_pos >= capacity) {
+				int old_capacity = capacity;
+				capacity = (capacity * 2);
+				T** new_obj_arr = new T * [capacity];
+
+				for (int i = 0; i < old_capacity; i++) {
+					new_obj_arr[i] = obj_arr[i];
+				}
+				delete[] obj_arr;
+				obj_arr = new_obj_arr;
 			}
-			obj_arr[current_pos++] = insert_data;		//주소값이 저절로 들어가짐 포인터라
+			return;
 		}
 		
+		//속성 삽입
+		void InsertAttrArr(DynamicStr *AttrName) {
+			AddAttrArr();
+			T* new_attr = new T;
+			new_attr->SetName(AttrName);
+			obj_arr[current_pos++] = new_attr;
+		}
 
 	public:
 		int current_pos;
@@ -243,7 +246,8 @@ namespace nXml_Parser {
 	public:
 		AttrObj() {};
 		~AttrObj() {
-			printf("소멸자 AttrObj : %p\n", this);
+			delete AttrName;
+			delete AttrData;
 		}
 
 		AttrObj(const AttrObj& other) {
@@ -273,12 +277,13 @@ namespace nXml_Parser {
 
 	class XmlObj {
 	public:
-		XmlObj() : TagName(nullptr), AttrArr(nullptr) {};
+		XmlObj() : TagName(nullptr), AttrArr() {};
 		~XmlObj() {
 			printf("소멸자 XmlObj : %p\n", this);
 			delete TagName;
-			delete AttrArr;
-		};
+			//속성들 소멸자
+			delete &AttrArr;
+		}
 		XmlObj(const XmlObj& other) {
 			printf("XmlObj 복사생성자\n");
 		}
@@ -292,37 +297,20 @@ namespace nXml_Parser {
 			return TagName->p_d_str;
 		}
 
-		//속성 초기화 및 생성
-		AttrObj* Init_Attr(DynamicStr* Attr_Name) {
-			AttrObj* new_attr = new AttrObj();
-			new_attr->SetName(Attr_Name);
-			printf("속성 생성 완료 : %s\n", new_attr->GetName());
-
-			return new_attr;
+		//속성 배열 생성 및 초기화
+		void InitAttrArr() {
+			AttrArr.InitAttrArr();
 		}
 
-		//속성배열 초기화 함수
-		void Init_Attr_Arr() {
-			AttrArr = new DynamicArr<AttrObj>();
+		void operator<<(DynamicStr* AttrName) {
+			if (AttrArr.obj_arr == nullptr) InitAttrArr();
+			AttrArr.InsertAttrArr(AttrName);
 		}
 		
-		//주소를 통해서 매개변수에 전달해주어야 함
-		void Insert_Attr_Arr(AttrObj* insert_data) {
-			if (AttrArr == nullptr) {
-				Init_Attr_Arr();
-			}
-			AttrArr->Insert_Arr(insert_data);		//삽입
-		}
-
-		//User API Code
-		void operator<<(DynamicStr* Attr_Name) {
-			AttrObj* new_attr = Init_Attr(Attr_Name);
-			
-			Insert_Attr_Arr(new_attr);
-		}
 	public:
 		DynamicStr* TagName;		//객체인 자신의 이름
-		DynamicArr<AttrObj>* AttrArr;		//나만의 속성'들'
+		DynamicArr<AttrObj> AttrArr;		//나만의 속성'들'
+		DynamicArr<XmlObj> XmlObjArr;		//하위 객체
 	};
 
 
@@ -360,14 +348,11 @@ namespace nXml_Parser {
 		AttrName2->FitSizeStr();
 
 		testTag << AttrName1;
+		testTag << AttrName1;
+		testTag << AttrName1;
 		testTag << AttrName2;
-		testTag << AttrName1;
-		testTag << AttrName1;
-		testTag << AttrName1;
-		testTag << AttrName1;
-
-		
-
+		testTag << AttrName2;
+		testTag << AttrName2;
 		
 		
 		
