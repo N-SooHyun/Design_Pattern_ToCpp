@@ -244,7 +244,7 @@ namespace nXml_Parser {
 
 	class AttrObj {
 	public:
-		AttrObj() {};
+		AttrObj() : AttrName(nullptr), AttrData(nullptr){};
 		~AttrObj() {
 			delete AttrName;
 			delete AttrData;
@@ -277,7 +277,7 @@ namespace nXml_Parser {
 
 	class XmlObj {
 	public:
-		XmlObj() : TagName(nullptr), AttrArr() {};
+		XmlObj() : TagName(nullptr) {};
 		~XmlObj() {
 			printf("소멸자 XmlObj : %p\n", this);
 			delete TagName;
@@ -330,7 +330,7 @@ namespace nXml_Parser {
 		
 		XmlObj testTag;
 		testTag.SetName(testName);
-		delete testName;
+		//delete testName;
 
 		printf("태그 이름 : %s\n", testTag.GetName());
 
