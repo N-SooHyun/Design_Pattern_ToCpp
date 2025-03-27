@@ -134,18 +134,15 @@ namespace nDynamic {
 	public:
 		DynamicArr() :current_pos(0), capacity(0), obj_arr(nullptr) {};
 		~DynamicArr() {
+
 			for (int i = 0; i < current_pos; i++) {
 				delete obj_arr[i];
 			}
 			delete[] obj_arr;
+
 		};
 		DynamicArr(const DynamicArr& other) {
 			printf("DynamicArr 복사생성자\n");
-		}
-
-		//해제
-		void DeleteFunc() {
-			
 		}
 
 		//속성 배열 초기화
@@ -274,6 +271,7 @@ namespace nXml_Parser {
 		DynamicStr* AttrName;		//속성인 자신의 이름
 		DynamicStr* AttrData;		//속성의 데이터
 	};
+	
 
 	class XmlObj {
 	public:
@@ -282,8 +280,8 @@ namespace nXml_Parser {
 			printf("소멸자 XmlObj : %p\n", this);
 			delete TagName;
 			//속성들 소멸자
-			delete &AttrArr;
-		}
+			//delete &AttrArr;		이거 없어도 애체오 AttrArr이 알아서 소멸함
+		} 
 		XmlObj(const XmlObj& other) {
 			printf("XmlObj 복사생성자\n");
 		}
@@ -350,9 +348,10 @@ namespace nXml_Parser {
 		testTag << AttrName1;
 		testTag << AttrName1;
 		testTag << AttrName1;
-		testTag << AttrName2;
-		testTag << AttrName2;
-		testTag << AttrName2;
+		testTag << AttrName1;
+		testTag << AttrName1;
+		testTag << AttrName1;
+
 		
 		
 		
