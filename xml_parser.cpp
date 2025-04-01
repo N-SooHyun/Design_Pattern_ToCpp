@@ -253,7 +253,7 @@ namespace nXml_Parser {
 
 		void SetName(DynamicStr* name) {
 			AttrName = DynamicStr::SetStr(name);
-		}
+		} 
 
 		char* GetName() {
 			return AttrName->p_d_str;
