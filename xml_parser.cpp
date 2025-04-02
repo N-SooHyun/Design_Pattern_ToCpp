@@ -139,22 +139,22 @@ namespace nDynamic {
 				delete obj_arr[i];
 			}
 			delete[] obj_arr;
-
 		};
+
 		DynamicArr(const DynamicArr& other) {
 			printf("DynamicArr 복사생성자\n");
 		}
-
-		//속성 배열 초기화
-		void InitAttrArr() {
+		
+		//동적 배열 초기화
+		void InitDyArr() {
 			if (obj_arr == nullptr) {
 				capacity = 4;
 				obj_arr = new T*[capacity];
 			}
 		}
 
-		//속성 배열 크기 증가(예외 검사용)
-		void AddAttrArr() {
+		//배열 크기 증가(예외 검사용)
+		void AddDyArr() {
 			if (current_pos >= capacity) {
 				int old_capacity = capacity;
 				capacity = (capacity * 2);
@@ -170,12 +170,19 @@ namespace nDynamic {
 		}
 		
 		//속성 삽입
-		void InsertAttrArr(DynamicStr *AttrName) {
-			AddAttrArr();
+		void InsertDyArr(DynamicStr *NodeName) {
+			AddDyArr();
 			T* new_attr = new T;
-			new_attr->SetName(AttrName);
+			new_attr->SetName(NodeName);
 			obj_arr[current_pos++] = new_attr;
 		}
+
+		template<typename para>
+		void InsertDyArr(para *NodeName) {
+			AddDyArr();
+			obj_arr[current_pos++] = NodeName;
+		}
+
 
 	public:
 		int current_pos;
@@ -272,7 +279,6 @@ namespace nXml_Parser {
 		DynamicStr* AttrData;		//속성의 데이터
 	};
 	
-
 	class XmlObj {
 	public:
 		XmlObj() : TagName(nullptr) {};
@@ -295,17 +301,40 @@ namespace nXml_Parser {
 			return TagName->p_d_str;
 		}
 
-		//속성 배열 생성 및 초기화
-		void InitAttrArr() {
-			AttrArr.InitAttrArr();
+		//태그 이름 설정하기
+		void SetData(DynamicStr* data) {
+			TagData = DynamicStr::SetStr(data);
+		}
+		//태그이름 가져오기
+		char* GetData() {
+			return TagData->p_d_str;
 		}
 
-		void operator<<(DynamicStr* AttrName) {
+		//속성 배열 생성 및 초기화
+		void InitAttrArr() {
+			AttrArr.InitDyArr();
+		}
+
+		//태그 배열 생성 및 초기화
+		void InitTagArr() {
+			XmlObjArr.InitDyArr();
+		}
+
+		//사용자 코드
+		//속성배열 삽입
+		void AddAttrObj(DynamicStr* AttrName) {
 			if (AttrArr.obj_arr == nullptr) InitAttrArr();
-			AttrArr.InsertAttrArr(AttrName);
+			AttrArr.InsertDyArr(AttrName);
+		}
+
+		//태그배열 삽입
+		void AddXmlObj(XmlObj *XmlNode) {
+			if (XmlObjArr.obj_arr == nullptr) InitTagArr();
+			XmlObjArr.InsertDyArr<XmlObj>(XmlNode);
 		}
 		
 	public:
+		DynamicStr* TagData;		//객체인 나의 데이터(Tag당 1개)
 		DynamicStr* TagName;		//객체인 자신의 이름
 		DynamicArr<AttrObj> AttrArr;		//나만의 속성'들'
 		DynamicArr<XmlObj> XmlObjArr;		//하위 객체
@@ -345,15 +374,22 @@ namespace nXml_Parser {
 		AttrName1->FitSizeStr();
 		AttrName2->FitSizeStr();
 
-		testTag << AttrName1;
-		testTag << AttrName1;
-		testTag << AttrName1;
-		testTag << AttrName1;
-		testTag << AttrName1;
-		testTag << AttrName1;
+		testTag.AddAttrObj(AttrName1);
+		testTag.AddAttrObj(AttrName2);
+		testTag.AddAttrObj(AttrName2);
+		testTag.AddAttrObj(AttrName1);
 
-		
-		
+		DynamicStr* TagChild = new DynamicStr(1024);
+
+		for (int i = 0; i < 10; i++) {
+			TagChild->AsgOperStr(i, 'T');
+		}
+		TagChild->FitSizeStr();
+
+		XmlObj *ChildTag = new XmlObj();
+		ChildTag->SetName(TagChild);
+
+		testTag.AddXmlObj(ChildTag);
 		
 
 		//printf("%s\n", testTag.AttrArr->obj_arr[1].Getname());
