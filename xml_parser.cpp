@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <Windows.h>
 
 //XML은 <>형태로 싸여진 계층형 데이터 구조 문서이다.
 /*
@@ -340,7 +341,12 @@ namespace nXml_Parser {
 		DynamicArr<XmlObj> XmlObjArr;		//하위 객체
 	};
 
-
+	void XmlDataStruct_UI_UX() {
+		printf("<Xml Data Struct>");
+		char c;
+		using namespace nDynamic;
+		
+	}
 
 	void XmlParseMain() {
 		using namespace nDynamic;
@@ -378,6 +384,7 @@ namespace nXml_Parser {
 		testTag.AddAttrObj(AttrName2);
 		testTag.AddAttrObj(AttrName2);
 		testTag.AddAttrObj(AttrName1);
+
 
 		DynamicStr* TagChild = new DynamicStr(1024);
 
