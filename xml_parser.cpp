@@ -332,9 +332,11 @@ namespace nXml_Parser {
 		void AddXmlObj(XmlObj *XmlNode) {
 			if (XmlObjArr.obj_arr == nullptr) InitTagArr();
 			XmlObjArr.InsertDyArr<XmlObj>(XmlNode);
+			XmlNode->Parent = this;
 		}
 		
 	public:
+		XmlObj* Parent;				//부모 객체
 		DynamicStr* TagData;		//객체인 나의 데이터(Tag당 1개)
 		DynamicStr* TagName;		//객체인 자신의 이름
 		DynamicArr<AttrObj> AttrArr;		//나만의 속성'들'
