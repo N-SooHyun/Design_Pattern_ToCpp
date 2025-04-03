@@ -406,12 +406,16 @@ namespace nXml_Parser {
 }
 
 
-
+using namespace nDynamic;
 void Parser_Test(char* xml_str) {
 	int xml_str_max = 100;
 	int xml_current_pos = 0; 
 	char c;
 	bool xml_end_ck = false;
+
+	DynamicStr* AttrName;
+	
+
 	for (;; xml_current_pos++) {
 		c = xml_str[xml_current_pos];
 
