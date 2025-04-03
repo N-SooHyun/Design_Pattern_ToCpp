@@ -397,6 +397,8 @@ namespace nXml_Parser {
 		ChildTag->SetName(TagChild);
 
 		testTag.AddXmlObj(ChildTag);
+
+
 		
 
 		//printf("%s\n", testTag.AttrArr->obj_arr[1].Getname());
@@ -405,324 +407,41 @@ namespace nXml_Parser {
 
 
 
-/*		25.03.17 소멸자 이슈때문에 속성배열 구현을 못했음 하긴 했는데 암튼 그거 이어서 하면 될듯 
-namespace nDynamic {
+void Parser_Test(char* xml_str) {
+	int xml_str_max = 100;
+	int xml_current_pos = 0; 
+	char c;
+	bool xml_end_ck = false;
+	for (;; xml_current_pos++) {
+		c = xml_str[xml_current_pos];
 
-	class DynamicStr {		//문자열들 동적으로 넣어주는 클래스 대입연산자도 있음
-	public:
-		char* p_d_str;
-		int current_size_str;
-		int capacity_str;
+		if (c == '\n' || c == ' ') continue;
 
-		DynamicStr() {}
-
-		DynamicStr(int size) : capacity_str(size), current_size_str(0){
-			p_d_str = new char[capacity_str];
-		}
-		~DynamicStr() {
-			printf("Str 소멸자\n");
-			delete[] p_d_str;
-		}
-
-		void AsgOperStr(int pos, char c) {			//문자 대입연산
-			if (pos-1 >= capacity_str) {
-				SizeUpStr();
-			}
-			p_d_str[pos] = c;
-			p_d_str[pos + 1] = '\0';
-			current_size_str++;
-		}
-		void SizeUpStr() {							//문자 개수 부족할때 동적으로 늘려줌
-			int old_capacity = capacity_str;
-			capacity_str *= 2;
-			char* temp = new char[capacity_str];
-			for (int i = 0; i < old_capacity; i++) {
-				temp[i] = p_d_str[i];
-			}
-			delete p_d_str;
-
-			p_d_str = temp;
-		}
-
-		void EmptyStr(int init_capacity_size) {		//동적 문자열 해제해줌
-			delete p_d_str;
-			p_d_str = new char[init_capacity_size];
-			current_size_str = 0;
-			capacity_str = init_capacity_size;
-		}
-
-		void FitSizeStr() {							//불필요한 동적 영역 없애줌
-			char* temp = new char[current_size_str+1];
-			for (int i = 0; i < current_size_str; i++) {
-				temp[i] = p_d_str[i];
-			}
-			temp[current_size_str] = '\0';
-			delete p_d_str;
-			p_d_str = temp;
-		}
-
-		static DynamicStr* SetStr(DynamicStr* name) {
-			int pos = 0;
-			char* _name = name->p_d_str;
-			DynamicStr* ptrName = new DynamicStr(1024);
-			for (; (_name[pos] != '\0'); pos++)
-				ptrName->AsgOperStr(pos, _name[pos]);
-			ptrName->FitSizeStr();
-
-			return ptrName;
-		}
-	};
-
-	template <typename T>
-	class DynamicArr {
-	public:
-		DynamicArr() :currentPos(0), capacity(0), obj_arr(nullptr) {};
-		~DynamicArr() {
-			delete[] obj_arr;
-		};
-		DynamicArr(const DynamicArr& other) {
-			printf("DynamicArr 복사생성자\n");
-		}
-
-		void Init_Attr_Arr() {
-			if (obj_arr != nullptr) {
-				delete[] obj_arr;
-			}
-			capacity = 4;				//초기 속성값은 4정도?
-			obj_arr = new T[capacity];
-			currentPos = 0;
-		}
-
-		//배열크기 증가
-		void Add_Attr_Capacity() {
-			int old_capacity = capacity;
-			capacity = static_cast<int>(capacity*1.5);
-			T* new_attr_arr = new T[capacity];
-
-			for (int i = 0; i < old_capacity; i++) {
-				new_attr_arr[i] = obj_arr[i];
-			}
-			delete[] obj_arr;
-			obj_arr = new_attr_arr;
-		}
-
-		//배열에 대입
-		void operator<<(T& add_arr_node) {
-			if (currentPos >= capacity) {
-				Add_Attr_Capacity();
-			}
-			obj_arr[currentPos++] = add_arr_node;
-		}
-
-		//모든 속성 배열에 있는 값 출력
-		void All_Attr_Print() {
-			for (int i = 0; i < currentPos; i++) {
-				printf("%s \n", obj_arr[i].GetName());
-			}
-		}
-
-		T* Pocusing_Get_Attr(int pos) {
-			if (pos >= currentPos) {
-				printf("배열 크기에 맞는 위치의 값을 입력해주세요(현재 배열크기 : %d\n", currentPos);
-				return NULL;
-			}
-			obj_arr+pos;
-		}
-
-	public:
-		int currentPos;
-		int capacity;
-		T* obj_arr;
-	};
-}
-
-namespace nFile {
-	class ReadFile {
-	public:
-		FILE* pFile = NULL;
-		char* pXml_Content;
-		int capacity;
-		int current_size_str;
-
-		ReadFile(char* path) {
-			//fopen_s(&pFile, path, "r");
-			fopen_s(&pFile, path, "r");
-			capacity = 1024;
-			pXml_Content = new char[capacity];
-			current_size_str = 0;
-			CopyFile();
-		}
-		~ReadFile() {
-			delete pXml_Content;
-			fclose(pFile);
-		}
-		void CopyFile() {
-			char c;
-			char* temp;
-			for (current_size_str = 0; ; current_size_str++) {
-				c = fgetc(pFile);
-				if (c == EOF) break;
-				else if (current_size_str == capacity - 1) {
-					capacity *= 2;
-					temp = pXml_Content;
-					pXml_Content = new char[capacity];
-					for (int i = 0; i < current_size_str; i++) {
-						pXml_Content[i] = temp[i];
-					}
-					delete temp;
+		else if (c == '<') {		//Tag모드
+			xml_current_pos++;
+			xml_end_ck = false;
+			for (int j = 0; ; j++, xml_current_pos++) {
+				c = xml_str[xml_current_pos];
+				if (c == '>') break;
+				else if (c == '/') {
+					xml_end_ck = true;
 				}
-				pXml_Content[current_size_str] = c;
+				else if (c == ' ') {
+					//속성 넣어주면 됨
+				}
 			}
-			pXml_Content[current_size_str] = '\0';
-			temp = new char[current_size_str+1];
-			for (int i = 0; i<current_size_str; i++) {
-				temp[i] = pXml_Content[i];
-			}
-			temp[current_size_str] = '\0';
-			capacity = current_size_str;
-			delete pXml_Content;
-			pXml_Content = temp;
-			fclose(pFile);
+			//반복문 빠져나오면 태그 생성해줌
 		}
-	};
-}
-
-namespace nXml_Parser {
-	using namespace std;
-	using namespace nDynamic;
-
-	class AttrObj {
-	public:
-		AttrObj() {};
-		~AttrObj() {
-			printf("소멸자 AttrObj : %p\n", this);
+		else if (c != '>') {		//무조건 데이터라는 얘기임
+			
 		}
 
-		AttrObj(const AttrObj& other) {
-			printf("AttrObj 복사생성자\n");
-		}
-
-		void SetName(DynamicStr* name) {
-			AttrName = DynamicStr::SetStr(name);
-		}
-
-		char* GetName() {
-			return AttrName->p_d_str;
-		}
-
-		void SetData(DynamicStr* data) {
-			AttrData = DynamicStr::SetStr(data);
-		}
-
-		char* GetData() {
-			return AttrData->p_d_str;
-		}
-
-	private:
-		DynamicStr* AttrName;		//속성인 자신의 이름
-		DynamicStr* AttrData;		//속성의 데이터
-	};
-
-	class XmlObj {
-	public:
-		XmlObj() {};
-		~XmlObj() {
-			printf("소멸자 XmlObj : %p\n", this);
-			delete TagName;
-			delete AttrArr;
-		};
-		XmlObj(const XmlObj& other) {
-			printf("XmlObj 복사생성자\n");
-		}
-
-		//태그 이름 설정하기
-		void SetName(DynamicStr* name) {
-			TagName = DynamicStr::SetStr(name);
-		}
-		//태그이름 가져오기
-		char* GetName() {
-			return TagName->p_d_str;
-		}
-		//속성 초기화
-		void Init_Attr() {
-			if (AttrArr == nullptr) {
-				AttrArr = new DynamicArr<AttrObj>();
-				AttrArr->Init_Attr_Arr();
-			}
-		}
-		//속성에 값 추가
-		void Add_Attr(AttrObj* attr_node) {
-			Init_Attr();
-			*AttrArr << *attr_node;
-		}
-
-		void operator<<(AttrObj& add_attr) {
-			Init_Attr();
-			*AttrArr << add_attr;
-		}
-
-		AttrObj* operator[](int pos) const {
-			return AttrArr->Pocusing_Get_Attr(pos);
-		}
-
-	public:
-		DynamicStr* TagName;		//객체인 자신의 이름
-		DynamicArr<AttrObj>* AttrArr;		//나만의 속성'들'
-	};
 
 
-
-	void XmlParseMain() {
-		using namespace nDynamic;
-
-		char path[] = "directory\\test.xml";
-		nFile::ReadFile test(path);
-		printf("%s\n", test.pXml_Content);
-
-		DynamicStr *testName = new DynamicStr(1024);
-		for (int i = 0; i < 10; i++) {
-			testName->AsgOperStr(i, 'A');
-		}
-		testName->FitSizeStr();
-
-		XmlObj testTag;
-		testTag.SetName(testName);
-		delete testName;
-
-		printf("태그 이름 : %s\n", testTag.GetName());
-
-		printf("\n 속성 추가 2개\n");
-
-		DynamicStr* AttrName1 = new DynamicStr(11);
-		DynamicStr* AttrName2 = new DynamicStr(11);
-
-		for (int i = 0; i < 10; i++) {
-			AttrName1->AsgOperStr(i, 'B');
-			AttrName2->AsgOperStr(i, 'C');
-		}
-		AttrName1->FitSizeStr();
-		AttrName2->FitSizeStr();
-
-		AttrObj* Attr1 = new AttrObj();
-		AttrObj* Attr2 = new AttrObj();
-
-		Attr1->SetName(AttrName1);
-		Attr2->SetName(AttrName2);
-
-		testTag << *Attr1;
-		testTag << *Attr2;
-
-
-		testTag.AttrArr->All_Attr_Print();
-
-		testTag[0];
-
-
-		//printf("%s\n", testTag.AttrArr->obj_arr[1].Getname());
 	}
-}
-*/
+	
 
+}
 
 
 
