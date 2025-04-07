@@ -449,7 +449,12 @@ void Parser_Test(char* xml_str) {
 			for (int j = 0; ; j++, xml_current_pos++) {
 				c = xml_str[xml_current_pos];
 				if (c == '>') break;
-				else if (c == '/' || c == '?') xml_end_ck = true;
+				else if (c == '?') {
+					while (c != '>') c = xml_str[++xml_current_pos];
+					xml_current_pos--;
+					xml_end_ck = true;
+				}
+				else if (c == '/') xml_end_ck = true;
 				else if (c == ' ') {
 					//속성 모드
 					while (1) {
