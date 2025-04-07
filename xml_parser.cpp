@@ -170,7 +170,7 @@ namespace nDynamic {
 			return;
 		}
 		
-		//속성 삽입
+		//속성이름으로 생성이랑 삽입 동시에
 		void InsertDyArr(DynamicStr *NodeName) {
 			AddDyArr();
 			T* new_attr = new T;
@@ -178,6 +178,7 @@ namespace nDynamic {
 			obj_arr[current_pos++] = new_attr;
 		}
 
+		//속성만 가지고 삽입
 		template<typename para>
 		void InsertDyArr(para *NodeName) {
 			AddDyArr();
@@ -243,6 +244,8 @@ namespace nFile {
 	};
 }
 
+void Parser_Test(char* xml_str);
+
 namespace nXml_Parser {
 	using namespace std;
 	using namespace nDynamic;
@@ -260,7 +263,7 @@ namespace nXml_Parser {
 		}
 
 		void SetName(DynamicStr* name) {
-			AttrName = DynamicStr::SetStr(name);
+			AttrName = name;
 		} 
 
 		char* GetName() {
@@ -268,7 +271,7 @@ namespace nXml_Parser {
 		}
 
 		void SetData(DynamicStr* data) {
-			AttrData = DynamicStr::SetStr(data);
+			AttrData = data;
 		}
 
 		char* GetData() {
@@ -326,6 +329,11 @@ namespace nXml_Parser {
 		void AddAttrObj(DynamicStr* AttrName) {
 			if (AttrArr.obj_arr == nullptr) InitAttrArr();
 			AttrArr.InsertDyArr(AttrName);
+		}
+
+		void AddAttrObj(AttrObj* Attr) {
+			if (AttrArr.obj_arr == nullptr) InitAttrArr();
+			AttrArr.InsertDyArr<AttrObj>(Attr);
 		}
 
 		//태그배열 삽입
@@ -405,18 +413,28 @@ namespace nXml_Parser {
 
 		//printf("%s\n", testTag.AttrArr->obj_arr[1].Getname());
 	}
+
+	void testMain() {
+		char path[] = "directory\\test.xml";
+		nFile::ReadFile test(path);
+		Parser_Test(test.pXml_Content);
+	}
 }
 
 
 using namespace nDynamic;
+using namespace nXml_Parser;
 void Parser_Test(char* xml_str) {
-	int xml_str_max = 100;
+	int xml_str_max = 1024;
 	int xml_current_pos = 0; 
 	char c;
 	bool xml_end_ck = false;
-
+	bool attr_data_end_ck = false;
 	DynamicStr* AttrName;
-	
+	DynamicStr* TagName;
+	DynamicStr* AttrData;
+	XmlObj* XmlPtr;
+	AttrObj* AttrPtr;
 
 	for (;; xml_current_pos++) {
 		c = xml_str[xml_current_pos];
@@ -425,22 +443,69 @@ void Parser_Test(char* xml_str) {
 
 		else if (c == '<') {		//Tag모드
 			xml_current_pos++;
-
 			xml_end_ck = false;
+			TagName = new DynamicStr(xml_str_max);
+			XmlPtr = new XmlObj();
 			for (int j = 0; ; j++, xml_current_pos++) {
 				c = xml_str[xml_current_pos];
 				if (c == '>') break;
-				else if (c == '/') {
-					xml_end_ck = true;
-				}
+				else if (c == '/' || c == '?') xml_end_ck = true;
 				else if (c == ' ') {
-					//속성 넣어주면 됨
+					//속성 모드
+					while (1) {
+						xml_current_pos++;
+						AttrName = new DynamicStr(xml_str_max);
+						AttrData = new DynamicStr(xml_str_max);
+						for (int k = 0; ; k++, xml_current_pos++) {
+							c = xml_str[xml_current_pos];
+							if (c == '=') break;
+							AttrName->AsgOperStr(k, c);
+						}
+						bool start_attr_ck = false;
+						xml_current_pos++;
+						for (int k = 0; ; k++, xml_current_pos++) {
+							c = xml_str[xml_current_pos];
+							if (c == '\"') {	//속성 데이터 종료
+								if (start_attr_ck) {
+									xml_current_pos++;
+									break;
+								}
+								else {
+									start_attr_ck = true;
+									k--;
+									continue;
+								}
+							}
+							AttrData->AsgOperStr(k, c);
+						}
+						AttrName->FitSizeStr();
+						AttrData->FitSizeStr();
+						AttrPtr = new AttrObj();
+						AttrPtr->SetName(AttrName);
+						AttrPtr->SetData(AttrData);
+						XmlPtr->AddAttrObj(AttrPtr);
+						
+						printf("속성명 : %s   속성값 : %s\n", AttrPtr->GetName(), AttrPtr->GetData());
+
+						c = xml_str[xml_current_pos];
+						if (c == ' ') continue;
+						else if (c == '>') {
+							xml_current_pos--;
+							xml_end_ck = true;
+							break;
+						}
+					}
 				}
+				if (xml_end_ck) continue;
+				TagName->AsgOperStr(j, c);
 			}
 			//반복문 빠져나오면 태그 생성해줌
+			TagName->FitSizeStr();
+			XmlPtr->SetName(TagName);
+			printf("태그 이름 : %s\n", XmlPtr->GetName());
 		}
 		else if (c != '>') {		//무조건 데이터라는 얘기임
-			
+			break;
 		}
 
 
