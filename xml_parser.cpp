@@ -425,6 +425,7 @@ void Parser_Test(char* xml_str) {
 
 		else if (c == '<') {		//Tag¸ðµå
 			xml_current_pos++;
+
 			xml_end_ck = false;
 			for (int j = 0; ; j++, xml_current_pos++) {
 				c = xml_str[xml_current_pos];
