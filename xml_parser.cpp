@@ -285,7 +285,7 @@ namespace nXml_Parser {
 	
 	class XmlObj {
 	public:
-		XmlObj() : TagName(nullptr) {};
+		XmlObj() : TagName(nullptr), Parent(nullptr) {};
 		~XmlObj() {
 			printf("소멸자 XmlObj : %p\n", this);
 			delete TagName;
@@ -415,7 +415,7 @@ namespace nXml_Parser {
 	}
 
 	void testMain() {
-		char path[] = "directory\\test.xml";
+		char path[] = "directory\\debug_test.xml";
 		nFile::ReadFile test(path);
 		Parser_Test(test.pXml_Content);
 	}
@@ -430,11 +430,12 @@ void Parser_Test(char* xml_str) {
 	char c;
 	bool xml_end_ck = false;
 	bool attr_data_end_ck = false;
-	DynamicStr* AttrName;
-	DynamicStr* TagName;
-	DynamicStr* AttrData;
-	XmlObj* XmlPtr;
-	AttrObj* AttrPtr;
+	DynamicStr* AttrName = nullptr;
+	DynamicStr* TagName = nullptr;
+	DynamicStr* AttrData = nullptr;
+	XmlObj* XmlPtr = nullptr;
+	XmlObj* ParentXmlPtr = nullptr;
+	AttrObj* AttrPtr = nullptr;
 
 	for (;; xml_current_pos++) {
 		c = xml_str[xml_current_pos];
@@ -444,8 +445,23 @@ void Parser_Test(char* xml_str) {
 		else if (c == '<') {		//Tag모드
 			xml_current_pos++;
 			xml_end_ck = false;
-			TagName = new DynamicStr(xml_str_max);
-			XmlPtr = new XmlObj();
+
+			c = xml_str[xml_current_pos];
+			if (c == '/') {
+				xml_end_ck = true;
+				XmlPtr = XmlPtr->Parent;
+			}
+			else {
+				TagName = new DynamicStr(xml_str_max);
+				if (XmlPtr != nullptr) {
+					//자신이 '누군가'의 자식 태그임
+					ParentXmlPtr = XmlPtr;
+					XmlPtr = new XmlObj();
+					ParentXmlPtr->AddXmlObj(XmlPtr);
+				}
+				else
+					XmlPtr = new XmlObj();
+			}
 			for (int j = 0; ; j++, xml_current_pos++) {
 				c = xml_str[xml_current_pos];
 				if (c == '>') break;
@@ -454,7 +470,6 @@ void Parser_Test(char* xml_str) {
 					xml_current_pos--;
 					xml_end_ck = true;
 				}
-				else if (c == '/') xml_end_ck = true;
 				else if (c == ' ') {
 					//속성 모드
 					while (1) {
@@ -510,7 +525,7 @@ void Parser_Test(char* xml_str) {
 			printf("태그 이름 : %s\n", XmlPtr->GetName());
 		}
 		else if (c != '>') {		//무조건 데이터라는 얘기임
-			break;
+			continue;
 		}
 
 
