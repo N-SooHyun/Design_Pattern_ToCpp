@@ -433,9 +433,11 @@ void Parser_Test(char* xml_str) {
 	DynamicStr* AttrName = nullptr;
 	DynamicStr* TagName = nullptr;
 	DynamicStr* AttrData = nullptr;
+	DynamicStr* Data = nullptr;
 	XmlObj* XmlPtr = nullptr;
 	XmlObj* ParentXmlPtr = nullptr;
 	AttrObj* AttrPtr = nullptr;
+	
 
 	for (;; xml_current_pos++) {
 		c = xml_str[xml_current_pos];
@@ -447,6 +449,10 @@ void Parser_Test(char* xml_str) {
 			xml_end_ck = false;
 
 			c = xml_str[xml_current_pos];
+
+			if (c == '!')	//주석 처리
+				xml_end_ck = true;
+			
 			if (c == '/') {
 				xml_end_ck = true;
 				XmlPtr = XmlPtr->Parent;
@@ -525,6 +531,7 @@ void Parser_Test(char* xml_str) {
 			printf("태그 이름 : %s\n", XmlPtr->GetName());
 		}
 		else if (c != '>') {		//무조건 데이터라는 얘기임
+			
 			continue;
 		}
 

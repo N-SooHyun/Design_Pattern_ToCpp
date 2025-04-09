@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Tests xmlns="http://www.adatum.com">
+  <Test TestId="0001" TestType="CMD">
+	data
+  </Test>
+  <Test TestId="0001" TestType="CMD">
+	data
+  </Test>
+</Tests>
+
+<Tests>
+	<Test>
+		<Tes>
+			<T>
+				Data
+			</T>
+		</Tes>
+	</Test>
+</Tests>
