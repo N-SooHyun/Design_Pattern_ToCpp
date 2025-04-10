@@ -434,6 +434,7 @@ void Parser_Test(char* xml_str) {
 	DynamicStr* TagName = nullptr;
 	DynamicStr* AttrData = nullptr;
 	DynamicStr* Data = nullptr;
+	XmlObj* RootXml = nullptr;
 	XmlObj* XmlPtr = nullptr;
 	XmlObj* ParentXmlPtr = nullptr;
 	AttrObj* AttrPtr = nullptr;
@@ -442,7 +443,9 @@ void Parser_Test(char* xml_str) {
 	for (;; xml_current_pos++) {
 		c = xml_str[xml_current_pos];
 
-		if (c == '\n' || c == ' ') continue;
+		if (c == '\0') break;
+
+		if (c == '\n' || c == ' ' || c == '\t') continue;
 
 		else if (c == '<') {		//Tag모드
 			xml_current_pos++;
@@ -450,12 +453,18 @@ void Parser_Test(char* xml_str) {
 
 			c = xml_str[xml_current_pos];
 
-			if (c == '!')	//주석 처리
+			if (c == '!') {	//주석 처리
 				xml_end_ck = true;
-			
-			if (c == '/') {
+			}
+			else if (c == '/') {
 				xml_end_ck = true;
-				XmlPtr = XmlPtr->Parent;
+				if (XmlPtr->Parent != nullptr) {
+					XmlPtr = XmlPtr->Parent;
+				}
+				//최상위 루트임
+			}
+			else if (c == '?') {	//버전
+				xml_end_ck = true;
 			}
 			else {
 				TagName = new DynamicStr(xml_str_max);
@@ -471,12 +480,7 @@ void Parser_Test(char* xml_str) {
 			for (int j = 0; ; j++, xml_current_pos++) {
 				c = xml_str[xml_current_pos];
 				if (c == '>') break;
-				else if (c == '?') {
-					while (c != '>') c = xml_str[++xml_current_pos];
-					xml_current_pos--;
-					xml_end_ck = true;
-				}
-				else if (c == ' ') {
+				else if (c == ' ' && !xml_end_ck) {
 					//속성 모드
 					while (1) {
 						xml_current_pos++;
@@ -526,20 +530,38 @@ void Parser_Test(char* xml_str) {
 				TagName->AsgOperStr(j, c);
 			}
 			//반복문 빠져나오면 태그 생성해줌
-			TagName->FitSizeStr();
-			XmlPtr->SetName(TagName);
-			printf("태그 이름 : %s\n", XmlPtr->GetName());
+			if (TagName != nullptr) {
+				TagName->FitSizeStr();
+				XmlPtr->SetName(TagName);
+				printf("태그 이름 : %s\n", XmlPtr->GetName());
+				TagName = nullptr;
+			}
 		}
 		else if (c != '>') {		//무조건 데이터라는 얘기임
-			
-			continue;
+			xml_current_pos--;
+			Data = new DynamicStr(xml_str_max);
+			for (int i = 0; ; i++) {
+				c = xml_str[++xml_current_pos];
+
+				if (c == '<') {
+					xml_current_pos--;
+					break;
+				}
+				Data->AsgOperStr(i, c);
+			}
+			Data->FitSizeStr();
+			XmlPtr->SetData(Data);
 		}
-
-
-
 	}
-	
 
+	for (;;) {
+		if (XmlPtr->Parent == nullptr) {
+			RootXml = XmlPtr;
+			break;
+		}
+	}
+
+	delete RootXml;
 }
 
 
