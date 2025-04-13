@@ -415,7 +415,7 @@ namespace nXml_Parser {
 	}
 
 	void testMain() {
-		char path[] = "directory\\debug_test.xml";
+		char path[] = "directory\\RollMount_EtherCAT.xml";
 		nFile::ReadFile test(path);
 		Parser_Test(test.pXml_Content);
 	}
@@ -513,9 +513,7 @@ void Parser_Test(char* xml_str) {
 						AttrPtr = new AttrObj();
 						AttrPtr->SetName(AttrName);
 						AttrPtr->SetData(AttrData);
-						XmlPtr->AddAttrObj(AttrPtr);
-						
-						printf("속성명 : %s   속성값 : %s\n", AttrPtr->GetName(), AttrPtr->GetData());
+						XmlPtr->AddAttrObj(AttrPtr);					
 
 						c = xml_str[xml_current_pos];
 						if (c == ' ') continue;
@@ -533,7 +531,6 @@ void Parser_Test(char* xml_str) {
 			if (TagName != nullptr) {
 				TagName->FitSizeStr();
 				XmlPtr->SetName(TagName);
-				printf("태그 이름 : %s\n", XmlPtr->GetName());
 				TagName = nullptr;
 			}
 		}
