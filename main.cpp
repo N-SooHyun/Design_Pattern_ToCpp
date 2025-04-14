@@ -1,82 +1,18 @@
 #include <iostream>
 
 #include "xml_parser.h"
+#include "Dom_Tree.h"
 
-class dummy {
-public:
-	dummy(char* name, char* data) {
-		this->name = name;
-		this->data = data;
-	}
-	dummy() {}
-	~dummy() {
-		
-	}
-
-	char* name;
-	char* data;
-};
-
-template <typename T>
-class test {
-public:
-	test() {
-		currentPos = 0;
-		capacity = 3;
-		obj_arr = new T * [capacity];
-		for (int i = 0; i < capacity; i++) {
-			obj_arr[i] = nullptr;
-		}
-	}
-	~test() {
-		delete[] obj_arr;
-	}
-
-	void Add_Arr() {
-		int old_capacity = capacity;
-		capacity += 3;
-
-		T** new_obj_arr = new T*[capacity];
-
-		for (int i = 0; i < old_capacity; i++) {
-			new_obj_arr[i] = obj_arr[i];
-		}
-		delete[] obj_arr;
-		obj_arr = new_obj_arr;
-	}
-
-	void ck() {
-		if (currentPos >= capacity) {
-			Add_Arr();
-			return;
-		}
-		return;
-	}
-
-	void Delete_Arr_Data() {
-		
-	}
-
-	void operator<<(T& insert_data) {
-		ck();
-		obj_arr[currentPos++] = &insert_data;
-	}
-
-	int currentPos;
-	int capacity;
-	T** obj_arr;		//포인터배열을 만들어야 할듯
-};
 
 int main() {
 	//객체지향에 대한 깊은 이해를 위해서
 	//계층구조에 대한 특화 프로그램인 XML,DOM
-	//디자인 패턴에 대해서 간략하게 배워보는 시간 가져보기
-
-	// nXml_Parser::XmlParseMain();
+	//디자인 패턴에 대해서 간략하게 배워보는 시간 가져보기	
 
 	
-	nXml_Parser::testMain();
+	//nXml_Parser::testMain();
 
+	User_Interface::UI_Main();
 
 	return 0;
 }
