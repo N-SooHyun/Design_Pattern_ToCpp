@@ -72,7 +72,6 @@ namespace nDynamic {
 			p_d_str = new char[capacity_str];
 		}
 		~DynamicStr() {
-			printf("Str 소멸자\n");
 			if (just_shallow_copy) {
 				just_shallow_copy = false;
 				return;
@@ -244,7 +243,7 @@ namespace nFile {
 	};
 }
 
-void Parser_Test(char* xml_str);
+void XmlDataStruct(char* xml_str);
 
 namespace nXml_Parser {
 	using namespace std;
@@ -287,7 +286,6 @@ namespace nXml_Parser {
 	public:
 		XmlObj() : TagName(nullptr), Parent(nullptr) {};
 		~XmlObj() {
-			printf("소멸자 XmlObj : %p\n", this);
 			delete TagName;
 			//속성들 소멸자
 			//delete &AttrArr;		이거 없어도 애체오 AttrArr이 알아서 소멸함
@@ -351,13 +349,6 @@ namespace nXml_Parser {
 		DynamicArr<XmlObj> XmlObjArr;		//하위 객체
 	};
 
-	void XmlDataStruct_UI_UX() {
-		printf("<Xml Data Struct>");
-		char c;
-		using namespace nDynamic;
-		
-	}
-
 	void XmlParseMain() {
 		using namespace nDynamic;
 
@@ -415,18 +406,18 @@ namespace nXml_Parser {
 	}
 
 	void testMain() {
-		char path[] = "directory\\RollMount_EtherCAT.xml";
+		char path[] = "directory\\Xml\\_test.xml";
 		nFile::ReadFile test(path);
-		Parser_Test(test.pXml_Content);
+		XmlDataStruct(test.pXml_Content);
 	}
 }
 
 
 using namespace nDynamic;
 using namespace nXml_Parser;
-void Parser_Test(char* xml_str) {
+XmlObj* Parser_Test(char* xml_str) {
 	int xml_str_max = 1024;
-	int xml_current_pos = 0; 
+	int xml_current_pos = 0;
 	char c;
 	bool xml_end_ck = false;
 	bool attr_data_end_ck = false;
@@ -558,8 +549,19 @@ void Parser_Test(char* xml_str) {
 		}
 	}
 
-	delete RootXml;
+	return RootXml;
+
+	//delete RootXml;
 }
 
 
 
+void XmlDataStruct(char* xml_str) {
+	printf("<Xml Data Struct>\n");
+
+	XmlObj* Root = Parser_Test(xml_str);
+
+
+
+	delete Root;
+}
