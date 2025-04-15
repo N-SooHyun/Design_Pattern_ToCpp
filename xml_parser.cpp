@@ -520,7 +520,7 @@ public:
 	//현재 태그의 이름 가져오기
 	void GetCurrentNodeName() {
 		if(print_use)
-			printf("Current Node Name : %s\n", CurrentNode->GetName());
+			printf("Node Name : <%s>\n", CurrentNode->GetName());
 	}
 
 	//상위 태그의 이름을 가져오기
@@ -530,7 +530,7 @@ public:
 				printf("%s가 최상위 Node입니다.\n", CurrentNode->GetName());
 				return;
 			}
-			printf("ParentNode : %s\n", CurrentNode->Parent->GetName());
+			printf("ParentNode : <%s>\n", CurrentNode->Parent->GetName());
 		}
 	}
 
@@ -538,9 +538,9 @@ public:
 	void GetCurrentNodeData() {
 		if (print_use) {
 			if (CurrentNode->TagData != nullptr)
-				printf("Current Node Data : %s\n", CurrentNode->GetData());
+				printf("Data : %s\n", CurrentNode->GetData());
 			else
-				printf("Current Node No Data\n");
+				printf("No Data\n");
 		}
 	}
 
@@ -615,6 +615,7 @@ void XmlDataStruct(char* xml_str) {
 		// 현재 노드 정보 표시
 		UI.GetCurrentNodeParentName();
 		UI.GetCurrentNodeName();
+		UI.GetCurrentNodeData();
 		printf("================================\n");
 
 		// 메뉴 출력
