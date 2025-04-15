@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <Windows.h>
-
+#include "FileBuf.h"
 //XML은 <>형태로 싸여진 계층형 데이터 구조 문서이다.
 /*
 <root>
@@ -192,56 +192,7 @@ namespace nDynamic {
 	};
 }
 
-namespace nFile {
-	class ReadFile {
-	public:
-		FILE* pFile = NULL;
-		char* pXml_Content;
-		int capacity;
-		int current_size_str;
 
-		ReadFile(char* path) {
-			//fopen_s(&pFile, path, "r");
-			fopen_s(&pFile, path, "r");
-			capacity = 1024;
-			pXml_Content = new char[capacity];
-			current_size_str = 0;
-			CopyFile();
-		}
-		~ReadFile() {
-			delete pXml_Content;
-			fclose(pFile);
-		}
-		void CopyFile() {
-			char c;
-			char* temp;
-			for (current_size_str = 0; ; current_size_str++) {
-				c = fgetc(pFile);
-				if (c == EOF) break;
-				else if (current_size_str == capacity - 1) {
-					capacity *= 2;
-					temp = pXml_Content;
-					pXml_Content = new char[capacity];
-					for (int i = 0; i < current_size_str; i++) {
-						pXml_Content[i] = temp[i];
-					}
-					delete temp;
-				}
-				pXml_Content[current_size_str] = c;
-			}
-			pXml_Content[current_size_str] = '\0';
-			temp = new char[current_size_str+1];
-			for (int i = 0; i<current_size_str; i++) {
-				temp[i] = pXml_Content[i];
-			}
-			temp[current_size_str] = '\0';
-			capacity = current_size_str;
-			delete pXml_Content;
-			pXml_Content = temp;
-			fclose(pFile);
-		}
-	};
-}
 
 void XmlDataStruct(char* xml_str);
 
@@ -284,7 +235,7 @@ namespace nXml_Parser {
 	
 	class XmlObj {
 	public:
-		XmlObj() : TagName(nullptr), Parent(nullptr) {};
+		XmlObj() : TagName(nullptr), Parent(nullptr), TagData(nullptr) {};
 		~XmlObj() {
 			delete TagName;
 			//속성들 소멸자
@@ -303,11 +254,11 @@ namespace nXml_Parser {
 			return TagName->p_d_str;
 		}
 
-		//태그 이름 설정하기
+		//태그 데이터 설정하기
 		void SetData(DynamicStr* data) {
 			TagData = DynamicStr::SetStr(data);
 		}
-		//태그이름 가져오기
+		//태그데이터 가져오기
 		char* GetData() {
 			return TagData->p_d_str;
 		}
@@ -406,7 +357,7 @@ namespace nXml_Parser {
 	}
 
 	void testMain() {
-		char path[] = "directory\\Xml\\_test.xml";
+		char path[] = "directory\\Xml\\RollMount_EtherCAT.xml";
 		nFile::ReadFile test(path);
 		XmlDataStruct(test.pXml_Content);
 	}
@@ -554,14 +505,170 @@ XmlObj* Parser_Test(char* xml_str) {
 	//delete RootXml;
 }
 
+class UI_Xml{
+public:
+	UI_Xml(XmlObj* Node) {
+		CurrentNode = Node;
+		child_obj_list_num = 0;
+		child_attr_list_num = 0;
+		print_use = true;
+	}
+	UI_Xml() :CurrentNode(nullptr) {}
+	~UI_Xml() {
+	}
 
+	//현재 태그의 이름 가져오기
+	void GetCurrentNodeName() {
+		if(print_use)
+			printf("Current Node Name : %s\n", CurrentNode->GetName());
+	}
+
+	//상위 태그의 이름을 가져오기
+	void GetCurrentNodeParentName() {
+		if (print_use) {
+			if (CurrentNode->Parent == nullptr) {
+				printf("%s가 최상위 Node입니다.\n", CurrentNode->GetName());
+				return;
+			}
+			printf("ParentNode : %s\n", CurrentNode->Parent->GetName());
+		}
+	}
+
+	//현재 태그의 데이터 있으면 가져오기
+	void GetCurrentNodeData() {
+		if (print_use) {
+			if (CurrentNode->TagData != nullptr)
+				printf("Current Node Data : %s\n", CurrentNode->GetData());
+			else
+				printf("Current Node No Data\n");
+		}
+	}
+
+	//현재 태그의 하위 속성 이름 데이터 리스트 출력
+	void GetCurrentNodeChildAttrList() {
+		child_attr_list_num = 0;
+		for (int i = 1; i <= CurrentNode->AttrArr.current_pos; i++, this->child_attr_list_num++) {
+			if (print_use) {
+				printf("%d. AttrName : %s\AttrData : %s\n", i, CurrentNode->AttrArr.obj_arr[i-1]->GetName(), CurrentNode->AttrArr.obj_arr[i - 1]->GetData());
+			}
+		}
+	}
+
+	//현재 태그의 하위 객체 리스트 출력
+	bool GetCurrentNodeChildObjList() {
+		child_obj_list_num = 0;
+		for (int i = 1; i<=CurrentNode->XmlObjArr.current_pos; i++, this->child_obj_list_num++) {
+			if (print_use) {
+				printf("%d. %s\n", i,CurrentNode->XmlObjArr.obj_arr[i-1]->GetName());
+			}
+		}
+		if (child_obj_list_num == 0) {
+			printf("하위 객체가 없습니다.\n");
+			return false;
+		}
+		return true;
+	}
+
+	//부모 노드로 돌아가기
+	void SetCurrentNodeParent() {
+		if (CurrentNode->Parent == nullptr) {
+			printf("현재 노드가 최상위 노드입니다.\n");
+			return;
+		}
+		CurrentNode = CurrentNode->Parent;
+		printf("Node 변경 완료!\n");
+	}
+
+	//선택한 객체로 Node 변경하기
+	void SetCurrentNodeSelectObj(int pos) {
+		if (child_obj_list_num == 0) {
+			print_use = false;
+			this->GetCurrentNodeChildObjList();
+			print_use = true;
+		}
+		if (pos > child_obj_list_num || pos < 1) {
+			printf("범위가 잘못 되었습니다.\n");
+			return;
+		}
+		CurrentNode = CurrentNode->XmlObjArr.obj_arr[pos - 1];
+		printf("Node 변경 완료!\n");
+	}
+
+private:
+	XmlObj* CurrentNode;
+	int child_obj_list_num;
+	int child_attr_list_num;
+	bool print_use;
+};
 
 void XmlDataStruct(char* xml_str) {
 	printf("<Xml Data Struct>\n");
 
 	XmlObj* Root = Parser_Test(xml_str);
 
+	UI_Xml UI(Root);
 
+	int cmd = -1;
+	while (1) {
+		system("cls");  // 화면을 지우기 전에 유용한 정보는 보여주기
+
+		// 현재 노드 정보 표시
+		UI.GetCurrentNodeParentName();
+		UI.GetCurrentNodeName();
+		printf("================================\n");
+
+		// 메뉴 출력
+		printf("1. 객체 선택하기\n");
+		printf("2. 객체 조회하기\n");
+		printf("3. 현재 노드 속성 조회\n");
+		printf("4. 현재 노드 데이터 조회\n");
+		printf("5. 부모 노드로 돌아가기\n");
+		printf("6. 종료\n");
+		printf("================================\n");
+
+		// 사용자에게 입력을 받음
+		printf("원하는 작업을 선택하세요 (1-5): ");
+		scanf_s("%d", &cmd);
+
+		// 선택에 따른 처리
+		switch (cmd) {
+		case 1:
+			printf("\n[객체 선택]\n");
+			if (UI.GetCurrentNodeChildObjList()){  // 객체 목록 표시
+				printf("선택할 객체 번호를 입력하세요: ");
+				scanf_s("%d", &cmd);
+				UI.SetCurrentNodeSelectObj(cmd);  // 선택한 객체 처리
+			}
+			break;
+		case 2:
+			printf("\n[객체 조회]\n");
+			UI.GetCurrentNodeChildObjList();  // 객체 목록 표시
+			break;
+		case 3:
+			printf("\n[현재 노드 속성 조회]\n");
+			UI.GetCurrentNodeChildAttrList();  // 노드 속성 조회
+			break;
+		case 4:
+			printf("\n[현재 노드 데이터 조회]\n");
+			UI.GetCurrentNodeData();  // 노드 데이터 조회
+			break;
+		case 5:
+			printf("\n[부모 노드로 돌아가기]\n");
+			UI.SetCurrentNodeParent();
+			break;
+		case 6:
+			printf("\n프로그램을 종료합니다.\n");
+			return;  // 종료
+		default:
+			printf("\n잘못된 입력입니다. 다시 시도하세요.\n");
+			break;
+		}
+
+		// 작업 완료 후 다시 메뉴로 돌아가게끔
+		printf("\n계속하려면 Enter 키를 누르세요...\n");
+		getchar();  // 이전 scanf_s에서 남은 개행 문자를 처리
+		getchar();  // 실제로 Enter를 기다림
+	}
 
 	delete Root;
 }

@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="DIP.cpp" />
     <ClCompile Include="Dom_Tree.cpp" />
+    <ClCompile Include="FileBuf.h" />
     <ClCompile Include="ISP.cpp" />
     <ClCompile Include="LSP.cpp" />
     <ClCompile Include="main.cpp" />
