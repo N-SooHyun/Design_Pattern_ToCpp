@@ -602,8 +602,6 @@ private:
 };
 
 void XmlDataStruct(char* xml_str) {
-	printf("<Xml Data Struct>\n");
-
 	XmlObj* Root = Parser_Test(xml_str);
 
 	UI_Xml UI(Root);
