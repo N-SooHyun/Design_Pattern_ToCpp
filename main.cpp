@@ -10,9 +10,9 @@ int main() {
 	//디자인 패턴에 대해서 간략하게 배워보는 시간 가져보기	
 
 	
-	//nXml_Parser::testMain();
+	Xml_Parser_Main();
 
-	User_Interface::UI_Main();
+	//User_Interface::UI_Main();
 
 	return 0;
 }

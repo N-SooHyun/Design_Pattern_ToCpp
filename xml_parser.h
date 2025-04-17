@@ -3,6 +3,6 @@
 #define XML_PARSER
 namespace nXml_Parser {
 	void XmlParseMain();
-	void testMain();
 }
+void Xml_Parser_Main();
 #endif

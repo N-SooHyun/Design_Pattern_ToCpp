@@ -355,12 +355,6 @@ namespace nXml_Parser {
 
 		//printf("%s\n", testTag.AttrArr->obj_arr[1].Getname());
 	}
-
-	void testMain() {
-		char path[] = "directory\\Xml\\RollMount_EtherCAT.xml";
-		nFile::ReadFile test(path);
-		XmlDataStruct(test.pXml_Content);
-	}
 }
 
 
@@ -607,6 +601,7 @@ void XmlDataStruct(char* xml_str) {
 	UI_Xml UI(Root);
 
 	int cmd = -1;
+
 	while (1) {
 		system("cls");  // 화면을 지우기 전에 유용한 정보는 보여주기
 
@@ -670,4 +665,40 @@ void XmlDataStruct(char* xml_str) {
 	}
 
 	delete Root;
+}
+
+nFile::ReadFile* File_Struct() {
+	int cmd;
+	File_Handle::File_Main* Dir = new File_Handle::File_Main("directory\\Xml", ".xml");
+	while (1) {
+		printf("<파일 목록>\n");
+		printf("================================\n");
+		Dir->Files_Print();
+		printf("================================\n");
+		printf("파싱하고자 하는 파일을 선택하여 주세요\n");
+		scanf_s("%d", &cmd);
+		Dir->Select_File(cmd);
+
+		printf("선택한 파일경로 : %s\n", Dir->file_buffer->pXml_Content);
+		break;
+		/*if(Dir->file_buffer != nullptr){
+			nFile::ReadFile* xml_file = new nFile::ReadFile(Dir->file_path);
+			return xml_file;
+		}*/
+	}
+	return Dir->file_buffer;
+}
+
+
+void Xml_Parser_Main() {
+	char path[] = "directory\\Xml\\RollMount_EtherCAT.xml";
+	nFile::ReadFile test(path);
+
+	//XmlDataStruct(test.pXml_Content);
+	printf("Xml파일을 파싱하여 1개의 자료형 데이터로 만들어주는 프로그램입니다.\n");
+	
+	nFile::ReadFile *file = File_Struct();
+
+	XmlDataStruct(file->pXml_Content);
+	
 }
