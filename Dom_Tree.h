@@ -135,12 +135,12 @@ namespace nDynamic {
 	};
 }
 
-namespace Dom_Parser {
+namespace Dom_Parser {                    
 	using namespace std;
 	using namespace nDynamic;
-
 	
 }
+
 
 
 namespace User_Interface {
