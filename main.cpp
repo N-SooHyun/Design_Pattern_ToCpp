@@ -2,6 +2,7 @@
 
 #include "xml_parser.h"
 #include "Dom_Tree.h"
+#include "SOLID.h"
 
 
 int main() {
@@ -10,10 +11,11 @@ int main() {
 	//디자인 패턴에 대해서 간략하게 배워보는 시간 가져보기	
 
 	
-	Xml_Parser_Main();
+	//Xml_Parser_Main();
 
 	//User_Interface::UI_Main();
 
+	Coffee_Main();
 	return 0;
 }
 
