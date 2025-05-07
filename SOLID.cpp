@@ -21,43 +21,73 @@ namespace Struct_Var {
 
 //UI Class 영역
 void UI_Class::Main_UI::First_Main() {
-		int select = 0;
-		while (1) {
-			system("cls");
-			printf("커피 주문 키오스크\n");
-			printf("------------------------\n");
-			printf("장바구니 내역\n");
-			//장바구니 보여주는 함수
-			printf("------------------------\n");
-			printf("1. 커피선택, 2. 결제, 3. 종료\n");
-			scanf_s("%d", &select);
+	this->select = 0;
+	while (1) {
+		system("cls");
+		printf("커피 주문 키오스크\n");
+		printf("------------------------\n");
+		printf("장바구니 내역\n");
+		//장바구니 보여주는 함수
+		printf("------------------------\n");
+		printf("1. 커피선택, 2. 결제, 3. 종료\n");
+		scanf_s("%d", &this->select);
+			
+		switch (this->select) {
+		case 1:
+			Side_Main_Select_Coffee();
+			break;
+		case 2:
+			printf("커피 결제 영역(영수증)\n");
+			//함수
+			break;
+		case 3:
+			printf("프로그램 종료\n");
+			return;
 
-			switch (select) {
-			case 1:
-				printf("커피 선택 영역\n");
-				//함수
-				break;
-			case 2:
-				printf("커피 결제 영역(영수증)\n");
-				//함수
-				break;
-			case 3:
-				printf("프로그램 종료\n");
-				return;
+		case -1:
+			printf("개발자 모드\n");
+			//개발자 모드를 만들어서 커피 추가 라던가 로그 보기를 만들꺼임
+			//함수
+			break;
 
-			case -1:
-				printf("개발자 모드\n");
-				//개발자 모드를 만들어서 커피 추가 라던가 로그 보기를 만들꺼임
-				//함수
-				break;
-
-			default:
-				printf("버튼을 잘못누르셨습니다.\n");
-				break;
-			}
+		default:
+			printf("버튼을 잘못누르셨습니다.\n");
+			break;
 		}
+	}
 }
+void UI_Class::Side_UI::Side_Main_Select_Coffee() {
+	this->select = 0;
+	while (1) {
+		system("cls");
+		printf("커피를 선택하세요\n");
+		printf("------------------------\n");
+		printf("장바구니 내역\n");
+		//장바구니 보여주는 함수
+		printf("------------------------\n");
+		printf("커피 선택영역 함수(자료구조로 구현)\n");
+		printf("예시\n");
+		printf("1. 카푸치노\n");
+		printf("2. 아메리카노\n");
+		printf("3. 종료\n");
+		printf("선택하세요 : ");
+		scanf_s("%d", &this->select);
 
+		switch (this->select) {
+		case 1:
+			printf("카푸치노\n");
+			break;
+		case 2:
+			printf("아메리카노\n");
+			break;
+		case 3:
+			return;
+		default:
+			printf("잘못 선택하셨습니다.\n");
+			break;
+		}
+	}
+}
 
 
 //Control Class 영역
