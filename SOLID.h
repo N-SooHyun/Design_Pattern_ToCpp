@@ -19,6 +19,7 @@ namespace UI_Class {
 		virtual void Side_Main_Select_Coffee() = 0;
 	protected:
 		int select;
+		
 	};
 
 
