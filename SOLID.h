@@ -16,10 +16,11 @@ namespace UI_Class {
 		~Main_UI() {}
 		
 		void First_Main();
-		virtual void Side_Main_Select_Coffee() = 0;
+		//virtual void Side_Main_Select_Coffee() = 0;
 	protected:
 		int select;
 		
+
 	};
 
 
