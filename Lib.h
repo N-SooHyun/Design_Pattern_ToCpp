@@ -1,9 +1,17 @@
 #pragma once
-#ifndef DOM_TREE
-#define DOM_TREE
+#include <stdio.h>
+#include <Windows.h>
+#include "xml_parser.h"
+#include "SOLID.h"
+#include <iostream>
+#include "FileBuf.h"
+#include <string>
+#include <string.h>
+#include <map>
+#include <vector>
 
 namespace nDynamic {
-
+	//동적 문자열
 	class DynamicStr {		//문자열들 동적으로 넣어주는 클래스 대입연산자도 있음
 	public:
 		char* p_d_str;
@@ -20,6 +28,20 @@ namespace nDynamic {
 				return;
 			}
 			delete[] p_d_str;
+		}
+
+		void OperStr(const char* c) {
+			int i = 0;
+			for (; c[i] != '\0'; i++) {
+				if (i >= capacity_str) {
+					SizeUpStr();
+				}
+				p_d_str[i] = c[i];
+			}
+			p_d_str[i] = c[i];
+			current_size_str = i;
+			capacity_str = i;
+			this->FitSizeStr();
 		}
 
 		void AsgOperStr(int pos, char c) {			//문자 대입연산
@@ -71,7 +93,7 @@ namespace nDynamic {
 		}
 	};
 
-	//템플릿 동적 배열
+	//템플릿 객체용 동적 배열
 	template <typename T>
 	class DynamicArr {
 	public:
@@ -134,15 +156,3 @@ namespace nDynamic {
 		T** obj_arr;		//포인터 배열을 활용
 	};
 }
-
-namespace Dom_Parser {                    
-	using namespace std;
-	using namespace nDynamic;
-	
-}
-
-namespace User_Interface {
-	void UI_Main();
-}
-
-#endif

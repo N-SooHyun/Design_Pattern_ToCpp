@@ -7,98 +7,41 @@
 //D : OrderManager는 구체적인 PaymentProcessor 대신 추상화된 Payment 인터페이스에 의존.
 // 커피주문 -> 결제 -> 제작 흐름으로 구현
 
-#include "SOLID.h"
-
-UI_Class::Main_UI* First_UI = nullptr;
-
-//각종 자료구조 선언부 함수(동적변수로 진행)*시스템호출부분은 전역으로 진행
-namespace Struct_Var {
-	void Var() {
-		First_UI = new UI_Class::Main_UI();
-	}
-}
 
 
-//UI Class 영역
-void UI_Class::Main_UI::First_Main() {
-	this->select = 0;
-	while (1) {
-		system("cls");
-		printf("커피 주문 키오스크\n");
-		printf("------------------------\n");
-		printf("장바구니 내역\n");
-		//장바구니 보여주는 함수
-		printf("------------------------\n");
-		printf("1. 커피선택, 2. 결제, 3. 종료\n");
-		scanf_s("%d", &this->select);
-			
-		switch (this->select) {
-		case 1:
-			Side_Main_Select_Coffee();
-			break;
-		case 2:
-			printf("커피 결제 영역(영수증)\n");
-			//함수
-			break;
-		case 3:
-			printf("프로그램 종료\n");
-			return;
+/*
+is-a		: 상속관계(일반화/특수화)		: class Dog: public Animal {};
+has-a		: 포함(합성or집합)관계		: class Car {Engine engine;};
+uses-a		: 일시적 사용(의존)관계		: void drive(Car car);
+creates-a	: 생성관계					: class Factory {return new Product();};
+knows-a		: 참조/연결만 있는 관계		: class A {B* b;};
 
-		case -1:
-			printf("개발자 모드\n");
-			//개발자 모드를 만들어서 커피 추가 라던가 로그 보기를 만들꺼임
-			//함수
-			break;
+일반화	- 상속관계(is-a)
+집합		- 느슨한 포함관계(has-a)
+합성		- 강한 포함관계(has-a)
+의존		- 사용관계(uses-a)
+연관		- 참조관계(knows-a)
+실체화	- 인터페이스 구현
 
-		default:
-			printf("버튼을 잘못누르셨습니다.\n");
-			break;
-		}
-	}
-}
-void UI_Class::Side_UI::Side_Main_Select_Coffee() {
-	this->select = 0;
-	while (1) {
-		system("cls");
-		printf("커피를 선택하세요\n");
-		printf("------------------------\n");
-		printf("장바구니 내역\n");
-		//장바구니 보여주는 함수
-		printf("------------------------\n");
-		printf("커피 선택영역 함수(자료구조로 구현)\n");
-		printf("예시\n");
-		printf("1. 카푸치노\n");
-		printf("2. 아메리카노\n");
-		printf("3. 종료\n");
-		printf("선택하세요 : ");
-		scanf_s("%d", &this->select);
+재사용 가능한 기능 모듈		-	합성(has-a) + 전략 패턴	- 조립 가능한 구조로 유지보수 용이
+계층적 기능 분리				-	상속(is-a)				- 코드 중복 제거, 공통 인터페이스
+상태에 따른 객체 변경			-	상태 패턴, 전략 패턴		- 런타임 동작 변경 용이
+느슨한 결합 + 통합 조율		-	중재자, 퍼사드			- 각 모듈을 독립시키고 중앙 통제 제공
+대규모 시스템, 교차 모듈 통신	-	이벤트 버스, 옵저버 패턴	- 비동기 통신, 관심사 분리
+런타임 객체 확장				-	인터페이스+DI(의존성주입)	- 유연성 극대화, 확장성 보장
 
-		switch (this->select) {
-		case 1:
-			printf("카푸치노\n");
-			break;
-		case 2:
-			printf("아메리카노\n");
-			break;
-		case 3:
-			return;
-		default:
-			printf("잘못 선택하셨습니다.\n");
-			break;
-		}
-	}
-}
+패턴				결합도(▼)	응집도(▲)	확장성(▲)	특징
+상속				높음			높음			낮음			고정된 구조, 수정 어려움
+합성(has-a)		낮음			중간			높음			조합 가능, 재사용 유리
+인터페이스+DI	매우낮음		높음			매우높음		테스트와 유지보수 유리
+옵저버			낮음			낮음			중간			비동기 이벤트 전달
+중재자			중간			높음			높음			커뮤니케이션 허브
+퍼사드			낮음			중간			중간			단순화된 외부 인터페이스 제공
 
 
-//Control Class 영역
-namespace Control_Class {
-	
-}
-
-
-//Main
-void Coffee_Main() {
-	Struct_Var::Var();
-	First_UI->First_Main();
-	delete First_UI;
-}
+<핵심>
+1. 모든 설계는 결합도는 낮추고 응집도는 높여야 한다
+2. 중간객체, 이벤트 시스템, 인터페이스, 퍼사드 등은 결합도를 낮추기 위한 전략
+3. 기능 확장이 필요할 경우에는 상속 또는 전략 패턴, 새로운 행위 주입에는 DI가 강력
+4. 중간객체는 패턴마다 다르지만 항상 존재한다. 다만 이름과 역할만 다르게 표현될 뿐
+*/

@@ -1,8 +1,4 @@
-#include <iostream>
-
-#include "xml_parser.h"
-#include "Dom_Tree.h"
-#include "SOLID.h"
+#include "Lib.h"
 
 
 int main() {
@@ -15,63 +11,16 @@ int main() {
 
 	//User_Interface::UI_Main();
 
-	Coffee_Main();
-	return 0;
+	//Coffee_Main();
+	
+	//nDynamic::DynamicStr path(1024);
+	
+	//path.OperStr("..\\Access_File_Security_Git\\Xml");
+
+	//printf("%s\n", path.p_d_str);
+
+	//File_Handle::File_Main test(path.p_d_str, ".xml");
+	//File_Handle::File_Main test(path.p_d_str, ".xml");
+	
+	//test.Files_Print();
 }
-
-
-
-
-
-/*
-for (int i = 0; (i < xml_file->current_size_str); i++) {
-			c = xml_file->pXml_Content[i];
-			for (;; i++) {
-				c = xml_file->pXml_Content[i];
-				if (c == '\n' || c == ' ') {
-					continue;
-				}
-				else {
-					break;
-				}
-			}
-			if (c == '<') {		//태그일때
-				tr_end_tag = false;
-				c = xml_file->pXml_Content[++i];
-				for (int j = 0; ; i++, j++) {
-					c = xml_file->pXml_Content[i];
-					if (c == '>') break;
-					if ((c == '/') && (xml_file->pXml_Content[i-1] == '<')) tr_end_tag = true;
-					else if (c == ' ') {}//attr_input = true;	//속성입력
-					if (tr_end_tag != true) {		//태그 이름 넣어주기
-						tag_name.OperStr(j, c);
-					}
-				}
-				if (tr_end_tag != true) {			//태그 종료 아닐때 태그 생성
-					if (tr_attr_input == true) {	//속성값 있다면
-
-					}
-					tag_name.FitSizeStr();
-					tag = new XmlObj(tag_name.p_d_str, tag_name.current_size_str);
-					printf("Tag : %s\n", tag_name.p_d_str);
-					tag_name.EmptyStr(tag_size);
-				}
-			}
-			//데이터일때
-			if (c != '>' && tr_end_tag == false) {
-				char ck;
-				for (int j = 0; ; i++,j++) {
-					c = xml_file->pXml_Content[i];
-					data.OperStr(j, c);
-					if (((ck = xml_file->pXml_Content[i + 1]) == '<') && ((ck = xml_file->pXml_Content[i + 2]) == '/')) {
-						i += 2;
-						tr_end_tag = true;
-						break;
-					}
-				}
-				data.FitSizeStr();
-				//printf("data : %s\n", data.p_d_str);
-				data.EmptyStr(data_size);
-			}
-		}
-*/

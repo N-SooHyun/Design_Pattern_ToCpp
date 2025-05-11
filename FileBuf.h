@@ -2,8 +2,7 @@
 
 #ifndef FILE_BUF
 #define FILE_BUF
-#include <Windows.h>
-#include <stdio.h>
+#include "Lib.h"
 
 namespace nFile {
 	class ReadFile {
@@ -81,6 +80,8 @@ namespace File_Handle {
 			hFind = FindFirstFile(path, &findFileData);
 			if (hFind == INVALID_HANDLE_VALUE) {
 				printf("디렉토리를 열 수 없습니다: %s\n", file_path);
+				DWORD error = GetLastError();
+				printf("에러 코드: %lu\n", error);
 				return;
 			}
 		}

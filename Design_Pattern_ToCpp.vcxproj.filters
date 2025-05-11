@@ -13,15 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\Coffee_System">
+      <UniqueIdentifier>{84d68caa-5724-45f0-a75b-b61cb8db783e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="xml_parser.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Dom_Tree.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SRP.cpp">
@@ -45,15 +45,33 @@
     <ClCompile Include="FileBuf.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UI_View.cpp">
+      <Filter>소스 파일\Coffee_System</Filter>
+    </ClCompile>
+    <ClCompile Include="Ctrl.cpp">
+      <Filter>소스 파일\Coffee_System</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>소스 파일\Coffee_System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="xml_parser.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Dom_Tree.h">
+    <ClInclude Include="SOLID.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="SOLID.h">
+    <ClInclude Include="Ctrl.h">
+      <Filter>소스 파일\Coffee_System</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_View.h">
+      <Filter>소스 파일\Coffee_System</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>소스 파일\Coffee_System</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

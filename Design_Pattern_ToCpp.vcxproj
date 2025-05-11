@@ -127,20 +127,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ctrl.cpp" />
     <ClCompile Include="DIP.cpp" />
-    <ClCompile Include="Dom_Tree.cpp" />
     <ClCompile Include="FileBuf.h" />
     <ClCompile Include="ISP.cpp" />
     <ClCompile Include="LSP.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="OCP.cpp" />
     <ClCompile Include="SOLID.cpp" />
     <ClCompile Include="SRP.cpp" />
+    <ClCompile Include="UI_View.cpp" />
     <ClCompile Include="xml_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Dom_Tree.h" />
+    <ClInclude Include="Ctrl.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Lib.h" />
     <ClInclude Include="SOLID.h" />
+    <ClInclude Include="UI_View.h" />
     <ClInclude Include="xml_parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
