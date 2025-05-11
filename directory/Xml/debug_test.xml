@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<Tests xmlns="tests">
-  <Test TestId="0001" TestType="CMD">
-	data
-  </Test>
-  <Test TestId="0001" TestType="CMD">
-	data
-  </Test>
-</Tests>

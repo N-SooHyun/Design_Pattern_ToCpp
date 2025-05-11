@@ -303,7 +303,7 @@ namespace nXml_Parser {
 	void XmlParseMain() {
 		using namespace nDynamic;
 
-		char path[] = "directory\\test.xml";
+		char path[] = "..\\Access_File_Security_Git\\test.xml";
 		nFile::ReadFile test(path);
 		printf("%s\n", test.pXml_Content);
 
@@ -669,7 +669,7 @@ void XmlDataStruct(char* xml_str) {
 
 nFile::ReadFile* File_Struct() {
 	int cmd;
-	File_Handle::File_Main* Dir = new File_Handle::File_Main("directory\\Xml", ".xml");
+	File_Handle::File_Main* Dir = new File_Handle::File_Main("..\\Access_File_Security_Git\\Xml", ".xml");
 	while (1) {
 		printf("<파일 목록>\n");
 		printf("================================\n");
@@ -691,7 +691,7 @@ nFile::ReadFile* File_Struct() {
 
 
 void Xml_Parser_Main() {
-	char path[] = "directory\\Xml\\RollMount_EtherCAT.xml";
+	char path[] = "..\\Access_File_Security_Git\\Xml\\RollMount_EtherCAT.xml";
 	nFile::ReadFile test(path);
 
 	//XmlDataStruct(test.pXml_Content);
