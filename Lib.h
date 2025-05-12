@@ -9,6 +9,9 @@
 #include <string.h>
 #include <map>
 #include <vector>
+#include "UI_View.h"
+#include "Model.h"
+#include "Ctrl.h"
 
 namespace nDynamic {
 	//동적 문자열

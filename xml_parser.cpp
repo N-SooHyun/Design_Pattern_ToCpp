@@ -551,7 +551,7 @@ nFile::ReadFile* File_Struct() {
 	return Dir->file_buffer;
 }
 
-
+//이거 쓰면 끝임
 void Xml_Parser_Main() {
 	char path[] = "..\\Access_File_Security_Git\\Xml\\RollMount_EtherCAT.xml";
 	nFile::ReadFile test(path);

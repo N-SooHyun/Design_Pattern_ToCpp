@@ -23,4 +23,5 @@ int main() {
 	//File_Handle::File_Main test(path.p_d_str, ".xml");
 	
 	//test.Files_Print();
+	Xml_Parser_Main();
 }
