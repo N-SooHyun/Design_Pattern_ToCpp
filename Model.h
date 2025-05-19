@@ -31,19 +31,32 @@ namespace Tree_Struct {
 		enum shot_syrup syrup;
 	}Tree_Opt;
 
-	class Coffee_Menu_Tree {
+	class Coffee_Menu_Node {
 	public:
-		Coffee_Menu_Tree() :coffee_name(new nDynamic::DynamicStr(1024)), price(0) {}
-		~Coffee_Menu_Tree() { 
+		Coffee_Menu_Node() :coffee_name(new nDynamic::DynamicStr(1024)), price(0) {}
+		~Coffee_Menu_Node() {
 			delete coffee_name;
 		}
-
-		void test();
 
 	private:
 		nDynamic::DynamicStr* coffee_name;
 		int price;
 		struct Coffee_Opt opt;
+		friend class Coffee_Tree;
+	};
+
+	class Coffee_Tree {
+	public:
+		Coffee_Tree() : Root_Node(nullptr), Current_Node(nullptr), Left_Node(nullptr), Right_Node(nullptr){}
+		~Coffee_Tree() {
+			//소멸 반드시 해줘야 하긴해
+		}
+
+	private:
+		Coffee_Menu_Node* Root_Node;
+		Coffee_Menu_Node* Current_Node;
+		Coffee_Menu_Node* Left_Node;
+		Coffee_Menu_Node* Right_Node;
 	};
 }
 
