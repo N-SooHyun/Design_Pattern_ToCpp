@@ -1,5 +1,13 @@
 #include "Lib.h"
+#include "Model.h"
+#include "UI_View.h"
+#include "Ctrl.h"
 
+union opt_temperature {
+	bool iced;
+	bool hot;
+	bool lukewarm;
+};
 
 void main() {
 	//객체지향에 대한 깊은 이해를 위해서
@@ -25,7 +33,10 @@ void main() {
 	//test.Files_Print();
 	//Xml_Parser_Main();
 
-	UI_View::Main_UI uMain;
+	//UI_View::Main_UI uMain;
 
-	uMain.home_main();
+	//uMain.home_main();
+
+	Tree_Struct::Coffee_Menu_Tree testVar;
+	testVar.test();
 }

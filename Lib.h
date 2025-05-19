@@ -1,6 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <Windows.h>
+#include <stdint.h>
 #include "xml_parser.h"
 #include "SOLID.h"
 #include <iostream>
@@ -9,9 +10,8 @@
 #include <string.h>
 #include <map>
 #include <vector>
-#include "UI_View.h"
-#include "Model.h"
-#include "Ctrl.h"
+
+
 
 namespace nDynamic {
 	//동적 문자열
@@ -159,3 +159,7 @@ namespace nDynamic {
 		T** obj_arr;		//포인터 배열을 활용
 	};
 }
+
+#include "UI_View.h"
+#include "Ctrl.h"
+#include "Model.h"

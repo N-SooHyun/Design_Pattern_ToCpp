@@ -22,7 +22,7 @@ namespace UI_View {
 	class Side_UI : Main_UI{
 	public:
 		Side_UI() {}
-		Side_UI() {}
+		~Side_UI() {}
 
 		void side_home();
 
