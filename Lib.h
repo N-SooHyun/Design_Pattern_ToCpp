@@ -33,6 +33,7 @@ namespace nDynamic {
 			delete[] p_d_str;
 		}
 
+		//문자열 대입 해주는 메소드
 		void OperStr(const char* c) {
 			int i = 0;
 			for (; c[i] != '\0'; i++) {

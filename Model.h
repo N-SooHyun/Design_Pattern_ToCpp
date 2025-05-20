@@ -15,12 +15,14 @@ namespace Trie_Struct {
 //coffee menu 데이터 구조 tree구조
 namespace Tree_Struct {
 	enum Temperature {
-		hot = 1,
+		no_temp = 0,
+		hot,
 		iced,
 		lukewarm
 	};
 	enum shot_syrup {
-		one = 1,	
+		no_shot_syrup = 0,
+		one,	
 		two,		
 		three
 	};
@@ -31,9 +33,14 @@ namespace Tree_Struct {
 		enum shot_syrup syrup;
 	}Tree_Opt;
 
+	//Node용 클래스
 	class Coffee_Menu_Node {
 	public:
-		Coffee_Menu_Node() :coffee_name(new nDynamic::DynamicStr(1024)), price(0) {}
+		Coffee_Menu_Node() :Left_Node(nullptr), Right_Node(nullptr), Parent_Node(nullptr),
+							coffee_name(new nDynamic::DynamicStr(1024)), 
+							price(0),
+							opt{no_temp, no_shot_syrup, no_shot_syrup}
+							{}
 		~Coffee_Menu_Node() {
 			delete coffee_name;
 		}
@@ -43,20 +50,34 @@ namespace Tree_Struct {
 		int price;
 		struct Coffee_Opt opt;
 		friend class Coffee_Tree;
+		Coffee_Menu_Node* Parent_Node;
+		Coffee_Menu_Node* Left_Node;
+		Coffee_Menu_Node* Right_Node;
 	};
 
+	//Node 관리용 클래스
 	class Coffee_Tree {
 	public:
-		Coffee_Tree() : Root_Node(nullptr), Current_Node(nullptr), Left_Node(nullptr), Right_Node(nullptr){}
+		Coffee_Tree() : Root_Node(nullptr), Current_Node(nullptr){}
 		~Coffee_Tree() {
 			//소멸 반드시 해줘야 하긴해
 		}
 
+		//개발자용 메소드들
+		//삽입
+		void Insert();
+		//삭제
+		void Delete();
+		//검색
+		void Select();
+
+
+		//API 사용자용 메소드들
+		void start();
+
 	private:
 		Coffee_Menu_Node* Root_Node;
 		Coffee_Menu_Node* Current_Node;
-		Coffee_Menu_Node* Left_Node;
-		Coffee_Menu_Node* Right_Node;
 	};
 }
 
