@@ -50,12 +50,13 @@ namespace Tree_Struct {
 		int price;
 		struct Coffee_Opt opt;
 		friend class Coffee_Tree;
+		friend class Coffee_Cart;
 		Coffee_Menu_Node* Parent_Node;
 		Coffee_Menu_Node* Left_Node;
 		Coffee_Menu_Node* Right_Node;
 	};
 
-	//Node 관리용 클래스
+	//Node 관리용 클래스(커피메뉴 관리용 클래스)
 	class Coffee_Tree {
 	public:
 		Coffee_Tree() : Root_Node(nullptr), Current_Node(nullptr){}
@@ -78,6 +79,14 @@ namespace Tree_Struct {
 	private:
 		Coffee_Menu_Node* Root_Node;
 		Coffee_Menu_Node* Current_Node;
+	};
+
+	//Node 주문시 장바구니 관리 클래스(선형구조)
+	class Coffee_Cart {
+	public:
+
+	private:
+
 	};
 }
 
