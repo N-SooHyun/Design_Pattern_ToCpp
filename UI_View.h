@@ -4,30 +4,38 @@
 
 //메인화면
 namespace UI_View {
+	//Interface
 	class Main_UI {
 	public:
 		Main_UI() : select(0){}
 		~Main_UI() {}
 
-		void home_main();
+		//메인 커피메뉴 영역
+		virtual void Home_Main() = 0;
 
 
 
 
-	private:
-		int select;
+	protected:
+		char select;
 	};
 
-
-	class Side_UI : Main_UI{
+	//Interface
+	class Side_UI{
 	public:
 		Side_UI() {}
 		~Side_UI() {}
 
-		void side_home();
+		//장바구니 영역
+		virtual void Side_Home() = 0;
+	};
 
-	private:
 
+	class Total_UI : public Main_UI, public Side_UI{
+	public:
+		void Home_Main();
+
+		void Side_Home();
 	};
 }
 
