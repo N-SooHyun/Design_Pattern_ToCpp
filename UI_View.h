@@ -7,17 +7,12 @@ namespace UI_View {
 	//Interface
 	class Main_UI {
 	public:
-		Main_UI() : select(0){}
+		Main_UI(){}
 		~Main_UI() {}
 
 		//메인 커피메뉴 영역
 		virtual void Home_Main() = 0;
 
-
-
-
-	protected:
-		char select;
 	};
 
 	//Interface
@@ -27,7 +22,8 @@ namespace UI_View {
 		~Side_UI() {}
 
 		//장바구니 영역
-		virtual void Side_Home() = 0;
+		virtual void Cart_Main() = 0;
+		virtual void Menu_Main() = 0;
 	};
 
 
@@ -35,7 +31,12 @@ namespace UI_View {
 	public:
 		void Home_Main();
 
-		void Side_Home();
+		void Cart_Main();
+
+		void Menu_Main();
+
+	private:
+		char select;
 	};
 }
 
