@@ -38,8 +38,12 @@ void main() {
 	//uMain.home_main();
 
 	
-	UI_View::Total_UI UI_Handler;
+	//UI_View::Total_UI UI_Handler;
 
 
-	UI_Handler.Home_Main();
+	//UI_Handler.Home_Main();
+
+	Json_Struct::Data_Json Json_Model;
+
+	Json_Model.Create();
 }

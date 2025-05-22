@@ -1,48 +1,41 @@
 #include "Lib.h"
 
-namespace Tree_Struct {
-	//Coffee_Menu_Node 클래스 함수정의
+namespace Model_Interface {
+	//기본 골격임 Default CRUD이며 
+	//단순히 File이라는것에 초점을 맞춘 자료구조를 제공해줌
+	bool CRUD_Struct::Create(const char* Path) {
 
-
-
-
-
-
-	//Coffee_Tree 클래스 함수정의
-	//삽입
-	void Coffee_Tree::Insert() {
-
+		return 0;
 	}
 
-	//삭제
-	void Coffee_Tree::Delete() {
-
+	bool CRUD_Struct::Read(const char* Path) {
+		return 0;
 	}
 
-	//검색
-	void Coffee_Tree::Select() {
-
+	bool CRUD_Struct::Update(const char* Path) {
+		return 0;
 	}
 
+	bool CRUD_Struct::Delete(const char* Path) {
+		return 0;
+	}
 
+	bool CRUD_Struct::Parsing() {
 
-	void Coffee_Tree::start() {
-		const char* name_1 = "아메리카노";
-		const char* name_2 = "카페 라떼";
-		const char* name_3 = "바닐라 라떼";
-		const char* name_4 = "오곡 라떼";
-		const char* name_5 = "녹차 라떼";
+	}
+}
 
-
+namespace Json_Struct {
+	bool Data_Json::Create(const char* Path) {
 		
-		while (1) {
-			if (Root_Node == nullptr) {
-				Root_Node = new Coffee_Menu_Node();
-				Root_Node->coffee_name->OperStr(name_1);
-			}
-
-
-		}
-
+		return 0;
 	}
+}
+
+namespace Xml_Struct {
+
+}
+
+namespace Ini_Struct {
+
 }
