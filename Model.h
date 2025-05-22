@@ -3,6 +3,10 @@
 #define MODEL
 #include "Lib.h"
 
+//CRUD의 역할만 하면 되는 영역
+//데이터 HDD, SDD에서 읽어와서 자료구조의 형태로 파싱만 하는 역할
+//파싱된 데이터를 CRUD의 형태에 맞게 API를 제공만 해주는 역할
+
 //coffee menu 데이터 구조 Trie구조
 namespace Trie_Struct {
 	class Coffee_Menu_Trie {
@@ -88,6 +92,20 @@ namespace Tree_Struct {
 	private:
 
 	};
+}
+
+
+
+namespace Json_Struct {
+	
+}
+
+namespace Xml_Struct {
+
+}
+
+namespace Ini_Struct {
+
 }
 
 #endif
