@@ -4,27 +4,40 @@ namespace Model_Interface {
 	//기본 골격임 Default CRUD이며 
 	//단순히 File이라는것에 초점을 맞춘 자료구조를 제공해줌
 	bool CRUD_Struct::Create(const char* Path) {
-		
-		if (Ctrl->Excep_Path(Path)) {	//Path에 파일이 있음
-
+		//생성은 곧 파일이 없어야함(폴더경로여야하는거임)
+		if (Ctrl->Excep_Path(Path) == Ctrl->IsDirectory) {
+			
 		}
-		else {
-
-		}
-		return 0;
+		else
+			return Ctrl->Fail;
 	}
 
 	bool CRUD_Struct::Read(const char* Path) {
-		
-		return 0;
+		//읽는것은 곧 파일이어야함
+		if (Ctrl->Excep_Path(Path) == Ctrl->IsFile) {
+
+		}
+		else
+			return Ctrl->Fail;
 	}
 
 	bool CRUD_Struct::Update(const char* Path) {
-		return 0;
+		//수정해주는것은 곧 파일이어야함
+		if (Ctrl->Excep_Path(Path) == Ctrl->IsFile) {
+
+		}
+		else
+			return Ctrl->Fail;
+
 	}
 
 	bool CRUD_Struct::Delete(const char* Path) {
-		return 0;
+		//삭제해주는것은 곧 파일이어야함
+		if (Ctrl->Excep_Path(Path) == Ctrl->IsFile) {
+
+		}
+		else
+			return Ctrl->Fail;
 	}
 
 	//File이 아닌 자료구조 Data에 초점을 맞춘 메소드들
@@ -50,14 +63,17 @@ namespace Model_Interface {
 	//데이터를 처리해주는 약간의 로직들을 구분
 	bool Logic_Ctrl::Excep_Path(const char* path) {
 		DWORD attrib = GetFileAttributesA(path);
-		if (attrib == INVALID_FILE_ATTRIBUTES) {
-			//경로나 파일이 존재하지 않음
-		}
-		else if (attrib & FILE_ATTRIBUTE_DIRECTORY) {
+		if (attrib & FILE_ATTRIBUTE_DIRECTORY) {
 			//디렉토리 경로임(폴더)
+			return PathStatus::IsDirectory;
+		}
+		else if (attrib == INVALID_FILE_ATTRIBUTES) {
+			//경로나 파일이 존재하지 않음
+			return PathStatus::NotFound;
 		}
 		else {
 			//특정 파일대상임
+			return PathStatus::IsFile;
 		}
 	}
 

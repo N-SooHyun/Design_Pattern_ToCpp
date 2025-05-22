@@ -57,7 +57,6 @@ namespace Model_Interface {
 		virtual bool Parsing() = 0;
 		virtual bool SetData() = 0;
 		virtual bool GetData() = 0;
-
 	};
 
 	//예외 처리등 약간의 처리 로직에 대한 클래스 의존성 인터페이스들
@@ -65,6 +64,18 @@ namespace Model_Interface {
 	public:
 		Logic_Ctrl() {}
 		virtual ~Logic_Ctrl() {}
+
+		enum PathStatus {
+			NotFound = 0,	//INVALID_FILE_ATTRIBUTES
+			IsDirectory,	//FILE_ATTRIBUTE_DIRECTORY
+			IsFile			//정상파일
+		};
+
+		enum ExcepStatus {
+			Fail = 0,
+			Success
+		};
+
 		virtual bool Excep_Path(const char* path);
 		virtual bool Excep_Data(nDynamic::DynamicStr* Data);
 	};
