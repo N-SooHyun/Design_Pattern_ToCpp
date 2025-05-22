@@ -44,6 +44,4 @@ void main() {
 	//UI_Handler.Home_Main();
 
 	Json_Struct::Data_Json Json_Model;
-
-	Json_Model.Create();
 }

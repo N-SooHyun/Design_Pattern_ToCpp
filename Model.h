@@ -15,7 +15,7 @@ namespace Model_Interface {
 	class Create_File {
 	public:
 		Create_File() {}
-		~Create_File() {}
+		virtual ~Create_File() {}
 
 		//자료구조 Data를 기반으로 파일을 생성
 		virtual bool Create(const char* Path) = 0;
@@ -24,7 +24,7 @@ namespace Model_Interface {
 	class Read_File {
 	public:
 		Read_File() {}
-		~Read_File() {}
+		virtual ~Read_File() {}
 
 		//자료구조 Data를 기반으로 파일을 읽어오기(파싱이 포함됨)
 		virtual bool Read(const char* Path) = 0;
@@ -33,7 +33,7 @@ namespace Model_Interface {
 	class Update_File {
 	public:
 		Update_File() {}
-		~Update_File() {}
+		virtual ~Update_File() {}
 
 		//자료구조 Data를 기반으로 기존파일을 덮어씌워줌
 		virtual bool Update(const char* Path) = 0;
@@ -42,7 +42,7 @@ namespace Model_Interface {
 	class Delete_File {
 	public:
 		Delete_File() {}
-		~Delete_File() {}
+		virtual ~Delete_File() {}
 
 		//자료구조와 관계없이 파일을 지워줌
 		virtual bool Delete(const char* Path) = 0;
@@ -51,35 +51,64 @@ namespace Model_Interface {
 	class Data_Login {
 	public:
 		Data_Login() {}
-		~Data_Login() {}
+		virtual ~Data_Login() {}
 
+		//Data를 자료구조화 만들기(Default는 문자열)
 		virtual bool Parsing() = 0;
+		virtual bool SetData() = 0;
+		virtual bool GetData() = 0;
+
+	};
+
+	//예외 처리등 약간의 처리 로직에 대한 클래스 의존성 인터페이스들
+	class Logic_Ctrl {
+	public:
+		Logic_Ctrl() {}
+		virtual ~Logic_Ctrl() {}
+		virtual bool Excep_Path(const char* path);
+		virtual bool Excep_Data(nDynamic::DynamicStr* Data);
 	};
 
 	class CRUD_Struct : public Create_File, public Read_File, public Update_File, public Delete_File, public Data_Login {
 	public:
-		CRUD_Struct() : Data(1024){}
-		~CRUD_Struct() {}
+		CRUD_Struct() : Data(1024), Ctrl(nullptr) {}
+		virtual ~CRUD_Struct() { 
+			if(Ctrl != nullptr)
+				delete Ctrl;
+		}
 
+		//File 단위
 		virtual bool Create(const char* Path);	//필수 : Path, Data
 		virtual bool Read(const char* Path);	//필수 : Path, Data
 		virtual bool Update(const char* Path);	//필수 : Path, Data
 		virtual bool Delete(const char* Path);	//필수 : Path, Data
+		
+		//Data 단위
 		virtual bool Parsing();		//필수 : Data!=null(Read할때 반드시 필요)
+		virtual bool SetData();
+		virtual bool GetData();
 
-
+		//제어로직 리모컨
+		virtual void Ctrl_Box(Logic_Ctrl* Ctrl);
 	private:
 		nDynamic::DynamicStr Data;
+		Logic_Ctrl* Ctrl;	//인터페이스 + DI 결합 로직 구현
 	};
 }
 
 using namespace Model_Interface;
 
 namespace Json_Struct {
+	class Json_Logic_Ctrl : public Logic_Ctrl {
+		//혹여 확장이 된다면
+	};
+
 	class Data_Json : public CRUD_Struct{
 	public:
-		Data_Json() {}
-		~Data_Json() {}
+		Data_Json() {
+			Ctrl_Box(new Json_Logic_Ctrl);
+		}
+		virtual ~Data_Json() {}
 
 		bool Create(const char* Path);
 	};
