@@ -47,7 +47,7 @@ namespace Model_Interface {
 		//자료구조와 관계없이 파일을 지워줌
 		virtual bool Delete(const char* Path) = 0;
 	};
-
+//-----------------------------------------------------------------------------
 	class Data_Login {
 	public:
 		Data_Login() {}
@@ -58,7 +58,7 @@ namespace Model_Interface {
 		virtual bool SetData() = 0;
 		virtual bool GetData() = 0;
 	};
-
+//-----------------------------------------------------------------------------
 	//예외 처리등 약간의 처리 로직에 대한 클래스 의존성 인터페이스들
 	class Logic_Ctrl {
 	public:
@@ -76,10 +76,11 @@ namespace Model_Interface {
 			Success
 		};
 
+		virtual char*  Path_Parsing(const char* path);
 		virtual bool Excep_Path(const char* path);
 		virtual bool Excep_Data(nDynamic::DynamicStr* Data);
 	};
-
+//-----------------------------------------------------------------------------
 	class CRUD_Struct : public Create_File, public Read_File, public Update_File, public Delete_File, public Data_Login {
 	public:
 		CRUD_Struct() : Data(1024), Ctrl(nullptr) {}

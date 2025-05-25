@@ -43,5 +43,9 @@ void main() {
 
 	//UI_Handler.Home_Main();
 
-	Json_Struct::Data_Json Json_Model;
+	//Json_Struct::Data_Json Json_Model;
+	Model_Interface::CRUD_Struct model_test;
+	model_test.Delete("..\\Access_File_Security_Git\\Xml\\RollMount_EtherCAT.xml");
+
+
 }
