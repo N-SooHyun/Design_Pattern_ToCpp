@@ -23,7 +23,7 @@ namespace nDynamic {
 		bool just_shallow_copy;
 
 		DynamicStr(int size) : capacity_str(size), current_size_str(0), just_shallow_copy(false) {
-			p_d_str = new char[capacity_str];
+			p_d_str = new char[capacity_str]();
 		}
 		~DynamicStr() {
 			if (just_shallow_copy) {

@@ -76,14 +76,18 @@ namespace Model_Interface {
 			Success
 		};
 
-		virtual char*  Path_Parsing(const char* path);
-		virtual bool Excep_Path(const char* path);
-		virtual bool Excep_Data(nDynamic::DynamicStr* Data);
+		enum DataStatus {
+			NoData=0,
+			YesData
+		};
+
+		virtual PathStatus Excep_Path(const char* path);
+		virtual DataStatus Excep_Data(nDynamic::DynamicStr* Data);
 	};
 //-----------------------------------------------------------------------------
 	class CRUD_Struct : public Create_File, public Read_File, public Update_File, public Delete_File, public Data_Login {
 	public:
-		CRUD_Struct() : Data(1024), Ctrl(nullptr) {}
+		CRUD_Struct() :Data_Name(1024), Data(1024), Ctrl(new Logic_Ctrl()) {}
 		virtual ~CRUD_Struct() { 
 			if(Ctrl != nullptr)
 				delete Ctrl;
@@ -103,7 +107,8 @@ namespace Model_Interface {
 		//제어로직 리모컨
 		virtual void Ctrl_Box(Logic_Ctrl* Ctrl);
 	private:
-		nDynamic::DynamicStr Data;
+		nDynamic::DynamicStr Data_Name;	//파일의 이름
+		nDynamic::DynamicStr Data;		//데이터 값
 		Logic_Ctrl* Ctrl;	//인터페이스 + DI 결합 로직 구현
 	};
 }
