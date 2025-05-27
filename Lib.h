@@ -19,10 +19,11 @@ namespace nDynamic {
 	public:
 		char* p_d_str;
 		int current_size_str;
+		int init_size;
 		int capacity_str;
 		bool just_shallow_copy;
 
-		DynamicStr(int size) : capacity_str(size), current_size_str(0), just_shallow_copy(false) {
+		DynamicStr(int size) : capacity_str(size), current_size_str(0), just_shallow_copy(false), init_size(size) {
 			p_d_str = new char[capacity_str]();
 		}
 		~DynamicStr() {
@@ -83,6 +84,29 @@ namespace nDynamic {
 			temp[current_size_str] = '\0';
 			delete p_d_str;
 			p_d_str = temp;
+		}
+
+		void DeleteStr() {
+			if (p_d_str != nullptr) {
+				delete p_d_str;
+			}
+			p_d_str = new char[init_size]();
+		}
+
+		void UpdateStr(char * AppendData) {
+			if(p_d_str[0] != '\0')
+				SizeUpStr();
+
+			int old_current_size = current_size_str;
+
+			for (int i = 0;;i++, old_current_size++) {
+				if (old_current_size >= capacity_str)
+					SizeUpStr();
+				p_d_str[old_current_size] = AppendData[i];
+				if (AppendData[i] == '\0') break;
+			}
+			current_size_str = old_current_size;\
+			FitSizeStr();
 		}
 
 		static DynamicStr* SetStr(DynamicStr* name) {

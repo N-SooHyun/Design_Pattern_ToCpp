@@ -13,9 +13,25 @@ union opt_temperature {
 
 void test_main() {
 	Model_Interface::CRUD_Struct model_test;
-	model_test.Delete("..\\Access_File_Security_Git\\File\\test_1");
-	
+	//model_test.Delete("..\\Access_File_Security_Git\\File\\test_1");
 
+	printf("%s\n", model_test.GetName());
+	printf("%s\n", model_test.GetData());
+	
+	model_test.SetData(const_cast<char*>("Hello Data"));
+	model_test.SetName(const_cast<char*>("Data_Name"));
+
+	printf("%s\n", model_test.GetName());
+	printf("%s\n", model_test.GetData());
+
+	model_test.AppendData(const_cast<char*>("Bye Data"));
+	model_test.AppendName(const_cast<char*>("Bye_Name"));	
+
+	printf("%s\n", model_test.GetName());
+	printf("%s\n", model_test.GetData());
+	
+	
+	
 }
 
 void main() {

@@ -55,6 +55,50 @@ namespace Model_Interface {
 	}
 
 //---------------------------------------------Data Logic----------------------------------------------------
+	//Data의 이름영역
+	char* CRUD_Struct::GetName() {
+		if (Ctrl->Excep_Data(&Data_Name) == Ctrl->NoData) {
+			printf("이름이 없습니다.\n");
+			return Data_Name.p_d_str;
+		}
+		else if (Ctrl->Excep_Data(&Data_Name) == Ctrl->NullData) {
+			printf("문자열이 Null값입니다.\n");
+			return nullptr;
+		}
+		return Data_Name.p_d_str;
+	}
+
+	bool CRUD_Struct::SetName(char* new_Name) {
+		if (Ctrl->Excep_Data(&Data_Name) == Ctrl->NullData) {
+			printf("문자열이 Null값입니다.\n");
+			return 0;
+		}
+
+		if (new_Name == nullptr) {
+			printf("매개변수가 잘못된 값입니다.\n");
+			return 0;
+		}
+
+		Data_Name.DeleteStr();
+
+		Data_Name.OperStr(new_Name);
+
+		return 1;
+	}
+
+	bool CRUD_Struct::AppendName(char* new_Name) {
+		if (Ctrl->Excep_Data(&Data_Name) == Ctrl->NullData) {
+			printf("문자열이 Null값입니다.\n");
+			return 0;
+		}
+		
+		if (new_Name == nullptr) {
+			printf("매개변수가 Null 값입니다.\n");
+			return 0;
+		}
+		Data_Name.UpdateStr(new_Name);
+		return 1;
+	}
 
 	//File이 아닌 자료구조 Data에 초점을 맞춘 메소드들
 	bool CRUD_Struct::Parsing() {
@@ -62,14 +106,55 @@ namespace Model_Interface {
 		return 0;
 	}
 
-	bool CRUD_Struct::SetData() {
+	bool CRUD_Struct::SetData(char* new_Data) {
+		//덮어쓰기
+		if (Ctrl->Excep_Data(&Data) == Ctrl->NullData) {
+			printf("문자열이 Null값입니다.\n");
+			return 0;
+		}
+		
+		if (new_Data == nullptr) {
+			printf("매개변수가 Null 값입니다.\n");
+			return 0;
+		}
 
-		return 0;
+
+
+		//Set이라함은 곧 덮어쓰기
+		Data.DeleteStr();
+
+		Data.OperStr(new_Data);
+
+		return 1;
 	}
 
-	bool CRUD_Struct::GetData() {
+	bool CRUD_Struct::AppendData(char* new_Data) {
+		//이어쓰기
+		if (Ctrl->Excep_Data(&Data) == Ctrl->NullData) {
+			printf("문자열이 Null값입니다.\n");
+			return 0;
+		}
 
-		return 0;
+		if (new_Data == nullptr) {
+			printf("매개변수가 Null 값입니다.\n");
+			return 0;
+		}
+		
+		Data.UpdateStr(new_Data);
+		return 1;
+	}
+
+	char* CRUD_Struct::GetData() {
+		if (Ctrl->Excep_Data(&Data) == Ctrl->NoData) {
+			printf("이름이 없습니다.\n");
+			return Data_Name.p_d_str;
+		}
+		else if (Ctrl->Excep_Data(&Data) == Ctrl->NullData) {
+			printf("문자열이 Null값입니다.\n");
+			return nullptr;
+		}
+
+		return Data.p_d_str;
 	}
 
 	void CRUD_Struct::Ctrl_Box(Logic_Ctrl* Ctrl) {
@@ -105,6 +190,9 @@ namespace Model_Interface {
 		//데이터가 있는지 판단
 		if (Data->p_d_str[0] == '\0') {
 			return DataStatus::NoData;
+		}
+		else if (Data->p_d_str == nullptr) {
+			return DataStatus::NullData;
 		}
 		else
 			return DataStatus::YesData;

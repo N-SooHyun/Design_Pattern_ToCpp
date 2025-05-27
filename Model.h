@@ -53,10 +53,16 @@ namespace Model_Interface {
 		Data_Login() {}
 		virtual ~Data_Login() {}
 
+		//Data의 이름
+		virtual char* GetName() = 0;
+		virtual bool SetName(char *) = 0;
+		virtual bool AppendName(char *) = 0;
+
 		//Data를 자료구조화 만들기(Default는 문자열)
 		virtual bool Parsing() = 0;
-		virtual bool SetData() = 0;
-		virtual bool GetData() = 0;
+		virtual bool SetData(char*) = 0;
+		virtual char* GetData() = 0;
+		virtual bool AppendData(char*) = 0;
 	};
 //-----------------------------------------------------------------------------
 	//예외 처리등 약간의 처리 로직에 대한 클래스 의존성 인터페이스들
@@ -78,7 +84,8 @@ namespace Model_Interface {
 
 		enum DataStatus {
 			NoData=0,
-			YesData
+			YesData,
+			NullData
 		};
 
 		virtual PathStatus Excep_Path(const char* path);
@@ -99,10 +106,16 @@ namespace Model_Interface {
 		virtual bool Update(const char* Path);	//필수 : Path, Data
 		virtual bool Delete(const char* Path);	//필수 : Path, Data
 		
+		//Data 이름 단위
+		virtual char* GetName();
+		virtual bool SetName(char*);
+		virtual bool AppendName(char*);
+
 		//Data 단위
 		virtual bool Parsing();		//필수 : Data!=null(Read할때 반드시 필요)
-		virtual bool SetData();
-		virtual bool GetData();
+		virtual bool SetData(char *);
+		virtual char* GetData();
+		virtual bool AppendData(char*);
 
 		//제어로직 리모컨
 		virtual void Ctrl_Box(Logic_Ctrl* Ctrl);
