@@ -3,15 +3,56 @@
 namespace Model_Interface {
 	//기본 골격임 Default CRUD이며 
 	//단순히 File이라는것에 초점을 맞춘 자료구조를 제공해줌
+	//기본골격이기 때문에 파일 확장자는 자유롭게 만들어줄 예정임
 	bool CRUD_Struct::Create(const char* Path) {
 		//1. 생성은 곧 파일이 없어야함(폴더경로여야하는거임)
 		//2. 생성을 할려면 Data에 값이 존재해야함
 		if (Ctrl->Excep_Path(Path) == Ctrl->IsDirectory) {
 			if (Ctrl->Excep_Data(&Data) == Ctrl->YesData) {
 				//비로소 생성이 가능
+				//Data를 기반으로 생성해야함
+				HANDLE CreateFile(
+					LPCSTR lpFileName,             // 파일 경로
+					DWORD dwDesiredAccess,         // 읽기/쓰기 권한
+					DWORD dwShareMode,             // 공유 모드
+					LPSECURITY_ATTRIBUTES lpSecurityAttributes, // 보안 속성
+					DWORD dwCreationDisposition,   // 생성 방식
+					DWORD dwFlagsAndAttributes,    // 파일 속성
+					HANDLE hTemplateFile           // 템플릿 파일 (보통 NULL)
+				);
+
+				size_t len = std::strlen(Path);
+				std::string fullPath = std::string(Path);
+				
+				if (Path[len - 1] != '\\') {
+					fullPath = fullPath + '\\';
+				}
+
+				fullPath = fullPath + Data_Name.p_d_str;
+
+				std::cout << fullPath ;
+				
+
+				
+				
+				
+
+				
+
+
+
+
+
+
+
+				return Ctrl->Success;
 			}
 			printf("저장하고자 하는 데이터가 없습니다.\n");
 			return Ctrl->Fail;
+		}
+		else if (Ctrl->Excep_Path(Path) == Ctrl->IsFile) {
+			//파일인경우
+			printf("파일임 어떻게 아는걸까?\n");
 		}
 		else{
 			printf("생성하고자 하는 폴더의 경로를 올바르게 작성해주세요\n");
@@ -168,7 +209,7 @@ namespace Model_Interface {
 		//path 작성 예시
 		//상대경로  "..\\Access_File_Security_Git\\Xml\\test.txt"
 		//절대경로 "C:\\Users\\NSH\\Documents\\Visual_studio_pro\\Design_Pattern_ToCpp"
-		//path가 "C:\Users\NSH\Documents" 이런식으로 있으면 에러나니까 "R(C:\Users\NSH\Documents)" 이렇게 하도록
+		//path가 "C:\Users\NSH\Documents" 이런식으로 있으면 에러나니까 R"(C:\Users\NSH\Documents)" 이렇게 하도록
 
 		DWORD attrib = GetFileAttributesA(path);
 

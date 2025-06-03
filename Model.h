@@ -19,6 +19,9 @@ namespace Model_Interface {
 
 		//자료구조 Data를 기반으로 파일을 생성
 		virtual bool Create(const char* Path) = 0;
+		virtual bool CreateWithExtension(const char* Path, const char* extension) {
+			return 0;
+		}
 	};
 
 	class Read_File {
@@ -68,8 +71,15 @@ namespace Model_Interface {
 	//예외 처리등 약간의 처리 로직에 대한 클래스 의존성 인터페이스들
 	class Logic_Ctrl {
 	public:
-		Logic_Ctrl() {}
+		Logic_Ctrl(bool is_dynamic) {
+			this->is_dynamic = is_dynamic;
+		}
 		virtual ~Logic_Ctrl() {}
+
+		inline bool get_isdynamic() { return this->is_dynamic; }
+		inline void set_isdynamic() {
+			//필요할지는 모르겠음
+		}
 
 		enum PathStatus {
 			NotFound = 0,	//INVALID_FILE_ATTRIBUTES
@@ -90,14 +100,19 @@ namespace Model_Interface {
 
 		virtual PathStatus Excep_Path(const char* path);
 		virtual DataStatus Excep_Data(nDynamic::DynamicStr* Data);
+	private:
+		bool is_dynamic;
 	};
 //-----------------------------------------------------------------------------
 	class CRUD_Struct : public Create_File, public Read_File, public Update_File, public Delete_File, public Data_Login {
 	public:
-		CRUD_Struct() :Data_Name(1024), Data(1024), Ctrl(new Logic_Ctrl()) {}
+		CRUD_Struct() :Data_Name(1024), Data(1024), Ctrl(nullptr) {}
 		virtual ~CRUD_Struct() { 
-			if(Ctrl != nullptr)
-				delete Ctrl;
+			if (Ctrl != nullptr) {
+				if (Ctrl->get_isdynamic()) {
+					delete Ctrl;
+				}
+			}
 		}
 
 		//File 단위
@@ -136,7 +151,7 @@ namespace Json_Struct {
 	class Data_Json : public CRUD_Struct{
 	public:
 		Data_Json() {
-			Ctrl_Box(new Json_Logic_Ctrl);
+			
 		}
 		virtual ~Data_Json() {}
 

@@ -15,20 +15,19 @@ void test_main() {
 	Model_Interface::CRUD_Struct model_test;
 	//model_test.Delete("..\\Access_File_Security_Git\\File\\test_1");
 
-	printf("%s\n", model_test.GetName());
-	printf("%s\n", model_test.GetData());
+	Model_Interface::Logic_Ctrl model_ctrl(0);
+
+	model_test.Ctrl_Box(&model_ctrl);
 	
 	model_test.SetData(const_cast<char*>("Hello Data"));
 	model_test.SetName(const_cast<char*>("Data_Name"));
 
-	printf("%s\n", model_test.GetName());
-	printf("%s\n", model_test.GetData());
 
 	model_test.AppendData(const_cast<char*>("Bye Data"));
 	model_test.AppendName(const_cast<char*>("Bye_Name"));	
 
-	printf("%s\n", model_test.GetName());
-	printf("%s\n", model_test.GetData());
+
+	model_test.Create(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\tests.txt)");
 	
 	
 
