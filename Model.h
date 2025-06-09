@@ -22,12 +22,9 @@ namespace Model_Interface {
 
 		//자료구조 Data를 기반으로 파일을 생성
 		virtual bool Create(const char* Path) = 0;
-		virtual bool CreateWithExtension(const char* Path, const char* extension) {
-			
-
-			return 0;
+		void SetExtension(const char* extension) {
+			Extension->OperStr(extension);
 		}
-
 		char* GetExtension() {
 			return Extension->p_d_str;
 		}
