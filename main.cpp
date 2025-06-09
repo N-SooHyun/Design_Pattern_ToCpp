@@ -27,9 +27,10 @@ void test_main() {
 	model_test.AppendName(const_cast<char*>("Bye_Name"));	
 
 
-	model_test.Create(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\tests.txt)");
+	model_test.Create(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\)");
+
 	
-	
+
 
 	
 }

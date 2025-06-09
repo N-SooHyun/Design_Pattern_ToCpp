@@ -14,14 +14,25 @@ namespace Model_Interface {
 	//자료구조를 넘겨주면 해당 자료구조에 맞는 파일을 만들어줌
 	class Create_File {
 	public:
-		Create_File() {}
+		Create_File() {
+			Extension = new nDynamic::DynamicStr(1024);
+			Extension->OperStr(".txt");
+		}
 		virtual ~Create_File() {}
 
 		//자료구조 Data를 기반으로 파일을 생성
 		virtual bool Create(const char* Path) = 0;
 		virtual bool CreateWithExtension(const char* Path, const char* extension) {
+			
+
 			return 0;
 		}
+
+		char* GetExtension() {
+			return Extension->p_d_str;
+		}
+	private:
+		nDynamic::DynamicStr* Extension;
 	};
 
 	class Read_File {

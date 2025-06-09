@@ -34,6 +34,39 @@ namespace nDynamic {
 			delete[] p_d_str;
 		}
 
+		void AddWord(const char* word) {
+			char* new_p_d_str = new char[current_size_str+2];
+
+			for (int i = 0; i < current_size_str; i++) {
+				new_p_d_str[i] = p_d_str[i];
+			}
+			new_p_d_str[current_size_str] = word[0];
+			new_p_d_str[++current_size_str] = '\0';
+			delete p_d_str;
+			p_d_str = new_p_d_str;
+		}
+
+		void AddStr(const char* str) {
+			int len = 0;
+			for (; str[len] != '\0'; len++) {}
+			int new_str_size = current_size_str + len + 1;
+
+			char* new_p_d_str = new char[new_str_size];
+			int pos = 0;
+
+			for (; pos < current_size_str; pos++) {
+				new_p_d_str[pos] = p_d_str[pos];
+			}
+			
+			for (int i = 0; pos < new_str_size; pos++, i++) {
+				new_p_d_str[pos] = str[i];
+			}
+			
+			current_size_str = new_str_size-1;
+			delete p_d_str;
+			p_d_str = new_p_d_str;
+		}
+
 		//문자열 대입 해주는 메소드(사용자호출 API)
 		void OperStr(const char* c) {
 			int i = 0;

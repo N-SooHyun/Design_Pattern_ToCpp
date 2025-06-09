@@ -22,24 +22,19 @@ namespace Model_Interface {
 				);
 
 				size_t len = std::strlen(Path);
-				std::string fullPath = std::string(Path);
+				nDynamic::DynamicStr fullPath(1024);
+				fullPath.OperStr(Path);
 				
 				if (Path[len - 1] != '\\') {
-					fullPath = fullPath + '\\';
+					fullPath.AddWord("\\");
 				}
 
-				fullPath = fullPath + Data_Name.p_d_str;
+				char* Extension = GetExtension();
 
-				std::cout << fullPath ;
-				
+				fullPath.AddStr(Data_Name.p_d_str);
+				fullPath.AddStr(Extension);
 
-				
-				
-				
-
-				
-
-
+				printf("%s\n", fullPath.p_d_str);
 
 
 
@@ -213,17 +208,18 @@ namespace Model_Interface {
 
 		DWORD attrib = GetFileAttributesA(path);
 
-		if (attrib & FILE_ATTRIBUTE_DIRECTORY) {
-			//디렉토리 경로임(폴더)
-			return PathStatus::IsDirectory;
-		}
-		else if (attrib == INVALID_FILE_ATTRIBUTES) {
+		if (attrib == INVALID_FILE_ATTRIBUTES) {
 			//경로나 파일이 존재하지 않음
 			return PathStatus::NotFound;
 		}
 		else {
-			//특정 파일대상임
-			return PathStatus::IsFile;
+			//경로가 존재하긴 함(파일인지 폴더인지 모름)
+			if (attrib & FILE_ATTRIBUTE_DIRECTORY)
+				//폴더임
+				return PathStatus::IsDirectory;
+			else
+				//파일임
+				return PathStatus::IsFile;
 		}
 	}
 
