@@ -11,16 +11,6 @@ namespace Model_Interface {
 			if (Ctrl->Excep_Data(&Data) == Ctrl->YesData) {
 				//비로소 생성이 가능
 				//Data를 기반으로 생성해야함
-				HANDLE CreateFile(
-					LPCSTR lpFileName,             // 파일 경로
-					DWORD dwDesiredAccess,         // 읽기/쓰기 권한
-					DWORD dwShareMode,             // 공유 모드
-					LPSECURITY_ATTRIBUTES lpSecurityAttributes, // 보안 속성
-					DWORD dwCreationDisposition,   // 생성 방식
-					DWORD dwFlagsAndAttributes,    // 파일 속성
-					HANDLE hTemplateFile           // 템플릿 파일 (보통 NULL)
-				);
-
 				size_t len = std::strlen(Path);
 				nDynamic::DynamicStr fullPath(1024);
 				fullPath.OperStr(Path);
@@ -37,7 +27,29 @@ namespace Model_Interface {
 				printf("%s\n", fullPath.p_d_str);
 
 
+				if (Ctrl->Excep_Path(fullPath.p_d_str) != Ctrl->NotFound) {
+					//현재 파일이 있습니다.
+					printf("현재 파일이 존재합니다.\n");
+					return Ctrl->Fail;
+				}
 
+				HANDLE hFile = CreateFileA(
+					fullPath.p_d_str,			//파일경로
+					GENERIC_WRITE,				//쓰기권한
+					0,							//공유 안함
+					NULL,						//기본 보안 속성
+					CREATE_ALWAYS,				//항상 새 파일 생성
+					FILE_ATTRIBUTE_NORMAL,		//일반 파일 속성
+					NULL						//템플릿 없음
+				);
+
+				if (hFile == INVALID_HANDLE_VALUE) {
+					printf("파일생성실패\n");
+					return Ctrl->Fail;
+				}
+
+				DWORD bytesWritten;
+				
 
 
 				return Ctrl->Success;

@@ -20,11 +20,11 @@ void test_main() {
 	model_test.Ctrl_Box(&model_ctrl);
 	
 	model_test.SetData(const_cast<char*>("Hello Data"));
-	model_test.SetName(const_cast<char*>("Data_Name"));
+	model_test.SetName(const_cast<char*>("tests"));
 
 
 	model_test.AppendData(const_cast<char*>("Bye Data"));
-	model_test.AppendName(const_cast<char*>("Bye_Name"));	
+	
 
 
 	model_test.Create(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\)");
