@@ -47,24 +47,37 @@ namespace Model_Interface {
 			printf("이미 해당 파일이 존재합니다.\n");
 			printf("해당 파일을 덮어생성할까요?(y,Y or n,N) : ");
 			scanf_s("%c", &s);
-			if (s == 'N' || s == 'n') {
+
+			switch (s) {
+			case 'n': case 'N':
 				printf("파일 생성을 취소합니다.\n");
 				return Ctrl->Fail;
-			}
-			else {
+			case 'y': case 'Y':
+				break;
+			default:
 				printf("잘못 선택하셨습니다.\n");
 				printf("파일 생성을 취소합니다.\n");
 				return Ctrl->Fail;
 			}
 
-			//파일 덮어쓰기
 
+			//파일 덮어쓰기
+			printf("덮어씌울게요~~");
+			if (!Ctrl->WinFileCreate(Path)) {
+				//파일생성 실패
+				return Ctrl->Fail;
+			}
 
 		}
 		else if (FileStatus == Ctrl->NewFile) {
 			//파일인경우인데 파일이 존재하지 않는경우
 			printf("파일이 존재하지 않는 경로입니다.\n");
 			printf("해당 경로로 파일을 만들어드릴게요\n");
+			if (!Ctrl->WinFileCreate(Path)) {
+				//파일생성 실패
+				return Ctrl->Fail;
+			}
+
 		}
 		else{
 			printf("생성하고자 하는 폴더의 경로를 올바르게 작성해주세요\n");
