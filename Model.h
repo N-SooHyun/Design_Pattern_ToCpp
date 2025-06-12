@@ -92,7 +92,8 @@ namespace Model_Interface {
 		enum PathStatus {
 			NotFound = 0,	//INVALID_FILE_ATTRIBUTES
 			IsDirectory,	//FILE_ATTRIBUTE_DIRECTORY
-			IsFile			//정상파일
+			IsFile,			//이미있는 파일경로
+			NewFile,		//없지만 만들려고하는 파일경로
 		};
 
 		enum ExcepStatus {
@@ -108,6 +109,7 @@ namespace Model_Interface {
 
 		virtual PathStatus Excep_Path(const char* path);
 		virtual DataStatus Excep_Data(nDynamic::DynamicStr* Data);
+		virtual ExcepStatus WinFileCreate(const char* path);
 	private:
 		bool is_dynamic;
 	};

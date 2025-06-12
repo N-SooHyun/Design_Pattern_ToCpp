@@ -7,7 +7,8 @@ namespace Model_Interface {
 	bool CRUD_Struct::Create(const char* Path) {
 		//1. 생성은 곧 파일이 없어야함(폴더경로여야하는거임)
 		//2. 생성을 할려면 Data에 값이 존재해야함
-		if (Ctrl->Excep_Path(Path) == Ctrl->IsDirectory) {
+		int FileStatus = Ctrl->Excep_Path(Path);
+		if (FileStatus == Ctrl->IsDirectory) {
 			if (Ctrl->Excep_Data(&Data) == Ctrl->YesData) {
 				//비로소 생성이 가능
 				//Data를 기반으로 생성해야함
@@ -26,25 +27,8 @@ namespace Model_Interface {
 
 				printf("%s\n", fullPath.p_d_str);
 
-
-				if (Ctrl->Excep_Path(fullPath.p_d_str) != Ctrl->NotFound) {
-					//현재 파일이 있습니다.
-					printf("현재 파일이 존재합니다.\n");
-					return Ctrl->Fail;
-				}
-
-				HANDLE hFile = CreateFileA(
-					fullPath.p_d_str,			//파일경로
-					GENERIC_WRITE,				//쓰기권한
-					0,							//공유 안함
-					NULL,						//기본 보안 속성
-					CREATE_ALWAYS,				//항상 새 파일 생성
-					FILE_ATTRIBUTE_NORMAL,		//일반 파일 속성
-					NULL						//템플릿 없음
-				);
-
-				if (hFile == INVALID_HANDLE_VALUE) {
-					printf("파일생성실패\n");
+				if (!Ctrl->WinFileCreate(fullPath.p_d_str)) {
+					//파일생성 실패
 					return Ctrl->Fail;
 				}
 
@@ -57,9 +41,30 @@ namespace Model_Interface {
 			printf("저장하고자 하는 데이터가 없습니다.\n");
 			return Ctrl->Fail;
 		}
-		else if (Ctrl->Excep_Path(Path) == Ctrl->IsFile) {
-			//파일인경우
-			printf("파일임 어떻게 아는걸까?\n");
+		else if (FileStatus == Ctrl->IsFile) {
+			//파일인경우 파일이 이미 존재한다는거임
+			char s;
+			printf("이미 해당 파일이 존재합니다.\n");
+			printf("해당 파일을 덮어생성할까요?(y,Y or n,N) : ");
+			scanf_s("%c", &s);
+			if (s == 'N' || s == 'n') {
+				printf("파일 생성을 취소합니다.\n");
+				return Ctrl->Fail;
+			}
+			else {
+				printf("잘못 선택하셨습니다.\n");
+				printf("파일 생성을 취소합니다.\n");
+				return Ctrl->Fail;
+			}
+
+			//파일 덮어쓰기
+
+
+		}
+		else if (FileStatus == Ctrl->NewFile) {
+			//파일인경우인데 파일이 존재하지 않는경우
+			printf("파일이 존재하지 않는 경로입니다.\n");
+			printf("해당 경로로 파일을 만들어드릴게요\n");
 		}
 		else{
 			printf("생성하고자 하는 폴더의 경로를 올바르게 작성해주세요\n");
@@ -101,6 +106,10 @@ namespace Model_Interface {
 			return Ctrl->Fail;
 		}
 	}
+
+	
+
+
 
 //---------------------------------------------Data Logic----------------------------------------------------
 	//Data의 이름영역
@@ -222,7 +231,45 @@ namespace Model_Interface {
 
 		if (attrib == INVALID_FILE_ATTRIBUTES) {
 			//경로나 파일이 존재하지 않음
+			//파일 경로일때는 이러한 파일을 만들고 싶다는 의미가 될수도 있음
+			size_t len = std::strlen(path);
+			nDynamic::DynamicStr fullPath(1024);
+			fullPath.OperStr(path);
+			len--;
+			for (; ;) {
+				if (fullPath.p_d_str[len] == '\\') {
+					break;
+				}
+				fullPath.DelWord();
+				len--;
+			}
+			
+			attrib = GetFileAttributesA(fullPath.p_d_str);
+
+			if (attrib & FILE_ATTRIBUTE_DIRECTORY) {
+				//상위 폴더 존재함
+				//하위 존재가 파일인지 폴더인지 확장자를 통해서 찾아야함
+				len = std::strlen(path);
+				for (;; len--) {
+					if (path[len] == '.') {
+						//하위 존재가 파일임 
+						return PathStatus::NewFile;
+					}
+					else if (path[len] == '\\') {
+						//하위 존재가 폴더임
+						return PathStatus::NotFound;
+					}
+				}
+
+			}
+			else {
+				//상위 폴더 자체가 없음 완전히 경로가
+				return PathStatus::NotFound;
+			}
+
+			//폴더의 경로일때는 NotFound하는게 맞음
 			return PathStatus::NotFound;
+
 		}
 		else {
 			//경로가 존재하긴 함(파일인지 폴더인지 모름)
@@ -245,6 +292,27 @@ namespace Model_Interface {
 		}
 		else
 			return DataStatus::YesData;
+	}
+
+	Logic_Ctrl::ExcepStatus Logic_Ctrl::WinFileCreate(const char* path) {
+		HANDLE hFile = CreateFileA(
+			path,			//파일경로
+			GENERIC_WRITE,				//쓰기권한
+			0,							//공유 안함
+			NULL,						//기본 보안 속성
+			CREATE_ALWAYS,				//항상 덮어쓰기
+			FILE_ATTRIBUTE_NORMAL,		//일반 파일 속성
+			NULL						//템플릿 없음
+		);
+
+
+		if (hFile == INVALID_HANDLE_VALUE) {
+			printf("파일 생성 실패: ");
+			std::cerr << GetLastError() << std::endl;
+			return Fail;
+		}
+
+
 	}
 }
 

@@ -34,6 +34,24 @@ namespace nDynamic {
 			delete[] p_d_str;
 		}
 
+		void DelStr(int size) {
+
+		}
+
+		void DelWord() {
+			p_d_str[current_size_str] = '\0';
+			current_size_str--;
+
+			if (current_size_str == -1) {
+				std::cout << "더이상 지울 수 없습니다." << std::endl;
+				return;
+			}
+
+			if ((capacity_str / 2) > current_size_str) {
+				FitSizeStr();
+			}
+		}
+
 		void AddWord(const char* word) {
 			char* new_p_d_str = new char[current_size_str+2];
 
