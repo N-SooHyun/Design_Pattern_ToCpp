@@ -86,7 +86,8 @@ namespace Model_Interface {
 	}
 
 	bool CRUD_Struct::Read(const char* Path) {
-		//읽는것은 곧 파일이어야함
+		//읽는것은 무조건 파일이어야 함
+		//1. 기존데이터에 무조건 덮어쓰기? 혹은 Append?
 		if (Ctrl->Excep_Path(Path) == Ctrl->IsFile) {
 
 		}

@@ -165,7 +165,7 @@ namespace Json_Struct {
 		}
 		virtual ~Data_Json() {}
 
-		bool Create(const char* Path);
+		virtual bool Create(const char* Path);
 	};
 }
 

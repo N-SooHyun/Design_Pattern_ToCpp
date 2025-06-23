@@ -9,6 +9,11 @@ union opt_temperature {
 	bool lukewarm;
 };
 
+#define MACRO_FUNC(n, c)\
+	int n; \
+	double c; 
+
+#define ARR(n,c,...) int n[c] = {__VA_ARGS__};
 
 
 void test_main() {
@@ -28,7 +33,8 @@ void test_main() {
 
 
 	model_test.Create(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\test.txt)");
-
+	
+	model_test.Read(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\test.txt)");
 }
 
 void main() {
@@ -57,6 +63,7 @@ void main() {
 	//Json_Struct::Data_Json Json_Model;
 	//Model_Interface::CRUD_Struct model_test;
 	//model_test.Delete("..\\Access_File_Security_Git\\Xml\\RollMount_EtherCAT.xml");
+
 
 
 }
