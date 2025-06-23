@@ -96,7 +96,7 @@ namespace nDynamic {
 			}
 			p_d_str[i] = c[i];
 			current_size_str = i;
-			capacity_str = i;
+			//capacity_str = i;
 			this->FitSizeStr();
 		}
 
@@ -133,6 +133,7 @@ namespace nDynamic {
 				temp[i] = p_d_str[i];
 			}
 			temp[current_size_str] = '\0';
+			capacity_str = current_size_str;
 			delete p_d_str;
 			p_d_str = temp;
 		}

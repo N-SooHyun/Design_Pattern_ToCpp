@@ -1,6 +1,9 @@
 #include "Lib.h"
 
 namespace Model_Interface {
+
+	
+
 	//기본 골격임 Default CRUD이며 
 	//단순히 File이라는것에 초점을 맞춘 자료구조를 제공해줌
 	//기본골격이기 때문에 파일 확장자는 자유롭게 만들어줄 예정임
@@ -22,18 +25,20 @@ namespace Model_Interface {
 
 				char* Extension = GetExtension();
 
+				if (Ctrl->Excep_Data(&Data_Name) == Ctrl->NoData) {
+					printf("기존 데이터의 Name이 존재하지 않습니다.\n");
+					return Ctrl->Fail;
+				}
+
 				fullPath.AddStr(Data_Name.p_d_str);
 				fullPath.AddStr(Extension);
 
 				printf("%s\n", fullPath.p_d_str);
 
-				if (!Ctrl->WinFileCreate(fullPath.p_d_str)) {
+				if (!Ctrl->WinFileCreate(fullPath.p_d_str, &Data)) {
 					//파일생성 실패
 					return Ctrl->Fail;
 				}
-
-				DWORD bytesWritten;
-				
 
 
 				return Ctrl->Success;
@@ -63,20 +68,24 @@ namespace Model_Interface {
 
 			//파일 덮어쓰기
 			printf("덮어씌울게요~~");
-			if (!Ctrl->WinFileCreate(Path)) {
+			if (!Ctrl->WinFileCreate(Path, &Data)) {
 				//파일생성 실패
 				return Ctrl->Fail;
 			}
+
+			
 
 		}
 		else if (FileStatus == Ctrl->NewFile) {
 			//파일인경우인데 파일이 존재하지 않는경우
 			printf("파일이 존재하지 않는 경로입니다.\n");
 			printf("해당 경로로 파일을 만들어드릴게요\n");
-			if (!Ctrl->WinFileCreate(Path)) {
+			if (!Ctrl->WinFileCreate(Path, &Data)) {
 				//파일생성 실패
 				return Ctrl->Fail;
 			}
+
+			
 
 		}
 		else{
@@ -89,6 +98,12 @@ namespace Model_Interface {
 		//읽는것은 무조건 파일이어야 함
 		//1. 기존데이터에 무조건 덮어쓰기? 혹은 Append?
 		if (Ctrl->Excep_Path(Path) == Ctrl->IsFile) {
+			if (Ctrl->WinFileRead(Path, &Data, &Data_Name) == Ctrl->Fail) {
+				printf("읽기 실패\n");
+				return Ctrl->Fail;
+			}
+
+
 
 		}
 		else
@@ -308,7 +323,7 @@ namespace Model_Interface {
 			return DataStatus::YesData;
 	}
 
-	Logic_Ctrl::ExcepStatus Logic_Ctrl::WinFileCreate(const char* path) {
+	Logic_Ctrl::ExcepStatus Logic_Ctrl::WinFileCreate(const char* path, const nDynamic::DynamicStr* Data) {
 		HANDLE hFile = CreateFileA(
 			path,			//파일경로
 			GENERIC_WRITE,				//쓰기권한
@@ -326,8 +341,53 @@ namespace Model_Interface {
 			return Fail;
 		}
 
+		DWORD written;
 
+		if (!WriteFile(hFile, Data->p_d_str, Data->capacity_str, &written, NULL)) {
+			DWORD err = GetLastError();
+			std::cerr << "파일 Write 실패 에러 코드 : " << err << std::endl;
+			return Fail;
+		}
+
+		CloseHandle(hFile);
+
+		return Success;
 	}
+
+
+	Logic_Ctrl::ExcepStatus Logic_Ctrl::WinFileRead(const char* path, const nDynamic::DynamicStr* Data, const nDynamic::DynamicStr* Data_Name) {
+		HANDLE hFile = CreateFileA(
+			path,			//파일경로
+			GENERIC_READ,				//쓰기권한
+			0,							//공유 안함
+			NULL,						//기본 보안 속성
+			OPEN_EXISTING,				//읽기 전용으로 열기
+			FILE_ATTRIBUTE_NORMAL,		//일반 파일 속성
+			NULL						//템플릿 없음
+		);
+
+
+		if (hFile == INVALID_HANDLE_VALUE) {
+			printf("파일 읽기 실패: ");
+			std::cerr << GetLastError() << std::endl;
+			return Fail;
+		}
+
+		DWORD read;
+
+		if (!ReadFile(hFile, Data->p_d_str, Data->capacity_str, &read, NULL)) {
+			DWORD err = GetLastError();
+			std::cerr << "파일 오버로딩 실패 에러 코드 : " << err << std::endl;
+			return Fail; 
+		}
+
+		Data->p_d_str[read] = '\0';
+
+		CloseHandle(hFile);
+
+		return Success;
+	}
+
 }
 
 namespace Json_Struct {

@@ -34,7 +34,7 @@ void test_main() {
 
 	model_test.Create(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\test.txt)");
 	
-	model_test.Read(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\test.txt)");
+	model_test.Read(R"(C:\Users\NSH\Documents\Visual_studio_pro\Access_File_Security_Git\File\tests.txt)");
 }
 
 void main() {

@@ -109,7 +109,8 @@ namespace Model_Interface {
 
 		virtual PathStatus Excep_Path(const char* path);
 		virtual DataStatus Excep_Data(nDynamic::DynamicStr* Data);
-		virtual ExcepStatus WinFileCreate(const char* path);
+		virtual ExcepStatus WinFileCreate(const char* path, const nDynamic::DynamicStr* Data);
+		virtual ExcepStatus WinFileRead(const char* path, const nDynamic::DynamicStr* Data, const nDynamic::DynamicStr* Data_Name);
 	private:
 		bool is_dynamic;
 	};
